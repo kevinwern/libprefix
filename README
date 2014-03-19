@@ -1,0 +1,10 @@
+libprefix - a simple, effective library for prefix-suffix based sets, to eventually be expanded to other structures
+
+To install:
+TBD
+
+To test:
+TBD
+
+Dependencies:
+check ( http://check.sourceforge.net )

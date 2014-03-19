@@ -81,3 +81,8 @@ int delete_word(Node *graph, char *word){
   }
 }
 
+void print_graph(Node *graph){
+
+}
+
+}
