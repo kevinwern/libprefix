@@ -3,15 +3,20 @@
 
 #include <stdlib.h>
 #include "graph.h"
-
+ 
 void init_graph(Node *n)
 {
   int i;
 
   for (i = 0; i < NEXT_ARR_SIZE; i++)
+    if (n->next[i] != NULL) {
+     init_graph(n->next[i]);
+      free(n->next[i]);
+    }
     n->next[i] = NULL;
 }
 
+// Character hash
 int character_hash(char c){
   return c % 26;
 }
@@ -85,4 +90,3 @@ void print_graph(Node *graph){
 
 }
 
-}
