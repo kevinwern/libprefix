@@ -26,4 +26,7 @@ int insert_word(Node *graph, char *word);
 
 // Remove a word in the set
 int delete_word(Node *graph, char *word);
+
+// Print the contents of a set
+void print_graph(Node *graph);
 #endif
