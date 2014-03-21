@@ -1,7 +1,7 @@
 # simple autoconfigure script
 
 aclocal
+libtoolize
 autoheader
-libtool
 autoconf
 automake --add-missing
