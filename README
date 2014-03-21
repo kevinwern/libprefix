@@ -1,10 +1,13 @@
 libprefix - a simple, effective library for prefix-suffix based sets, to eventually be expanded to other structures
 
 To install:
-TBD
+./autoconf.sh
+./configure
+make
+sudo make install
 
-To test:
-TBD
+To test (after install):
+make check
 
 Dependencies:
 check ( http://check.sourceforge.net )
