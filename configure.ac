@@ -9,7 +9,7 @@ m4_pattern_allow([AM_PROG_AR])
 AM_PROG_AR
 AM_INIT_AUTOMAKE([-Wall foreign])
 m4_pattern_allow([AM_PATH_CHECK])
-AM_PATH_CHECK([0.9.0],[])
+PKG_CHECK_MODULES([CHECK], [check >= 0.9.0])
 
 # Checks for programs.
 AC_PROG_CC
