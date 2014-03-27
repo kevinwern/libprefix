@@ -8,12 +8,22 @@ void init_graph(Node *n)
 {
   int i;
 
+  for (i = 0; i < NEXT_ARR_SIZE; i++){
+    n->next[i] = NULL;
+  }
+}
+
+void reinit_graph(Node *n){
+
+  int i;
+
   for (i = 0; i < NEXT_ARR_SIZE; i++)
     if (n->next[i] != NULL) {
-     init_graph(n->next[i]);
+      init_graph(n->next[i]);
       free(n->next[i]);
     }
     n->next[i] = NULL;
+
 }
 
 // Character hash

@@ -9,7 +9,8 @@
 
 START_TEST (ut_graph){
   // Does character hash work properly?
-  ck_assert_msg(character_hash('a') == 19, "character_hash of character 'a' should be 19, instead got %s", character_hash('a'));
+  ck_assert_msg(character_hash('a') == 19, "character_hash of character 'a' should be 19, instead got %d", character_hash('a'));
+//  ck_assert_msg(character_hash('a') == 19, NULL);
 
   Node g;
   //Initalize graph
@@ -52,7 +53,24 @@ START_TEST (ut_graph){
 }
 END_TEST
 
+Suite *graph_suite (void)
+{
+  Suite *s = suite_create ("Graph");
+
+  /* Core test case */
+  TCase *tc_graph = tcase_create ("unit_test_graph");
+  tcase_add_test (tc_graph, ut_graph);
+  suite_add_tcase (s, tc_graph);
+
+  return s;
+}
 
 int main() {
-  return 0;
+  int number_failed;
+  Suite *s = graph_suite();
+  SRunner *sr = srunner_create(s);
+  srunner_run_all (sr, CK_NORMAL);
+  number_failed = srunner_ntests_failed (sr);
+  srunner_free (sr);
+  return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

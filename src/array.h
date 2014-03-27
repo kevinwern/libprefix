@@ -9,19 +9,24 @@ typedef struct {
   int  size;
   int  total;
 
-} DynArray
+} DynArray;
+
+//Make array null
+void nullDynArray(DynArray *a);
 
 //Initialize array based on size
-void initDynArray(DynArray *a, int size);
+int initDynArray(DynArray *a, int size);
 
 //Initialize array based on initial string
-void initDynArrayStr(DynArray *a, char *str);
+int initDynArrayStr(DynArray *a, char *str);
 
 //Insert items into array
 void insertDynArray(DynArray *a, char *str);
 
 //Remove items based on size, items removed from end
-void removeDynArray(DynArray *a, char *str);
+void removeDynArray(DynArray *a, int remove);
 
 //Free dynamic array structure
 void clearDynArray(DynArray *a);
+
+#endif
