@@ -1,6 +1,8 @@
 // Graph.c
 // Set implemented string comparison
 #include <stdlib.h>
+#include <stdio.h>
+#include "array.h"
 #include "graph.h"
 
 void
@@ -121,25 +123,26 @@ print_graph (Node * graph)
 
     if (i > 'z'){
        if (word.total == 0) break;
-    }
-    else{
-       i = popDynArray(&word);
-       pivot->next[i] = path;
-       path = pivot;
-       pivot = previous;
-       previous = previous->next[word[word.total-1]];
-       i++;
-       continue;
+      else{
+         i = popDynArray(&word);
+         pivot->next[character_hash(i)] = path;
+         path = pivot;
+         pivot = previous;
+         if (word.total != 0)
+         previous = previous->next[character_hash(word.array[word.total-1])];
+         i++;
+         continue;
+      }
     }
 
-    if (path->next[i] != NULL){
+    if (path->next[character_hash(i)] != NULL){
       insertDynArray(&word,i);
       previous = pivot;
       pivot = path;
-      path = path->next[i];
-      pivot->next[i]=previous;
+      path = path->next[character_hash(i)];
+      pivot->next[character_hash(i)] = previous;
       i = 'a';
-      if (path->isword) printDynArray(i);
+      if (path->isword) printDynArray(&word);
     }
 
     else {

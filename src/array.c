@@ -18,8 +18,8 @@ int initDynArray(DynArray *a, int size){
   a->size = DEFAULT_SIZE;
   while (a->size<size)
     a->size *= 2;
-  a->array = malloc(sizeof(char) * size);
-  a->total = size;
+  a->array = malloc(sizeof(char) * a->size);
+  a->total = 0;
   return 0;
 }
 
@@ -40,7 +40,7 @@ int initDynArrayStr(DynArray *a, char *str){
 }
 
 //Insert items into array
-void insertDynArray(DynArray *a, char *str){
+void insertDynArrayStr(DynArray *a, char *str){
   int addsize = strlen(str);
   if (a->array != NULL){
     while (a->size < a->total+addsize){
@@ -52,6 +52,18 @@ void insertDynArray(DynArray *a, char *str){
     for (i = 0; i <addsize; i++){
       a->array[i+a->size] = str[i];
     }
+    a->total = a->total+addsize;
+  }
+}
+
+void insertDynArray(DynArray *a, char c){
+  if (a->array != NULL){
+    while (a->size < a->total+1){
+      a->size *= 2;
+    }
+    a->array = realloc(a->array, sizeof(char) * a->size);
+    a->array[a->total] = c;
+    a->total=a->total+1;
   }
 }
 
@@ -64,6 +76,22 @@ void removeDynArray(DynArray *a, int remove){
     }
     a->total = newsize;
     a->array = realloc(a->array, sizeof(char) * a->size);
+  }
+}
+
+//returns last character in array
+char popDynArray(DynArray *a){
+  if (a->total == 0) return 0;
+
+  int newsize = a->total-1;
+  if (a->array != NULL && newsize >=0){
+    while (a->size / 2 > newsize){
+      a->size /= 2;
+    }
+    char toReturn = a->array[a->total-1];
+    a->total = newsize;
+    a->array = realloc(a->array, sizeof(char) * a->size);
+    return toReturn;
   }
 }
 
