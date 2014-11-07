@@ -18,7 +18,6 @@ START_TEST (ut_array){
   printf ("%d\n", array.size);
   printDynArray(&array);
 
-
 }
 END_TEST
 

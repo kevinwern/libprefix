@@ -20,8 +20,14 @@ int initDynArray(DynArray *a, int size);
 //Initialize array based on initial string
 int initDynArrayStr(DynArray *a, char *str);
 
+//Remove last item in array, returning that item
+char popDynArray(DynArray *a);
+
 //Insert items into array
-void insertDynArray(DynArray *a, char *str);
+void insertDynArrayStr(DynArray *a, char *str);
+
+//Insert single character into array
+void insertDynArray(DynArray *a, char c);
 
 //Remove items based on size, items removed from end
 void removeDynArray(DynArray *a, int remove);
