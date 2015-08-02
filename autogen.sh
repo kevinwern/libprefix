@@ -1,7 +1,7 @@
 # simple autoconfigure script
 
 aclocal
-libtoolize
+case `uname` in Darwin*) glibtoolize --copy;; *) libtoolize ;; esac
 autoheader
 autoconf
 automake --add-missing
