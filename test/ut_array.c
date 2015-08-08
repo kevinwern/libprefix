@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../src/array.h"
+#include "../src/graph.h"
 //#define TEST_SIZE 5
 //#define TEST_STRING "peanuts"
 
@@ -72,6 +73,38 @@ START_TEST (ut_array_init_and_pop_works)
 }
 END_TEST
 
+START_TEST (ut_array_init_and_insert_node_basic)
+{
+  DynArray array;
+  Node node1, node2;
+  node1.key = 'a';
+  node2.key = 'b';
+  initDynArray(&array, 0);
+  insertDynArrayNode(&array, &node1);
+  insertDynArrayNode(&array, &node2);
+  char *arrayString = DynArrayToStrNode(&array);
+  ck_assert_msg(strcmp(arrayString, "ab") == 0, arrayString);
+}
+END_TEST
+
+START_TEST (ut_array_init_and_insert_node_hashed)
+{
+  DynArray array;
+  char i;
+  initDynArrayHashed(&array);
+  for (i = 'a'; i <= 'e'; i++){
+    Node* node = (Node *) malloc(sizeof(Node));
+    node->key = i;
+    insertDynArrayNodeHashed(&array, node);
+  }
+  ck_assert_msg(((Node*)((Node **)array.array)[1])->key == 'a', (Node*)((Node **)array.array)[1]);
+  Node *checkNode = lookupDynArrayNodeHashed(&array, 'c');
+  ck_assert_msg(checkNode->key == 'c');
+  checkNode = lookupDynArrayNodeHashed(&array, 'g');
+  ck_assert_msg(checkNode == NULL);
+}
+END_TEST
+
 Suite *array_suite(void)
 {
   Suite *s = suite_create("Array Init");
@@ -94,6 +127,12 @@ Suite *array_suite(void)
   TCase *tc_array_init_and_pop_works = tcase_create("unit_test_array_init_and_pop_works");
   tcase_add_test(tc_array_init_and_pop_works, ut_array_init_and_pop_works);
   suite_add_tcase(s, tc_array_init_and_pop_works);
+  TCase *tc_array_init_and_insert_node_basic = tcase_create("unit_test_array_init_and_insert_node_basic");
+  tcase_add_test(tc_array_init_and_insert_node_basic, ut_array_init_and_insert_node_basic);
+  suite_add_tcase(s, tc_array_init_and_insert_node_basic);
+  TCase *tc_array_init_and_insert_node_hashed = tcase_create("unit_test_array_init_and_insert_node_hashed");
+  tcase_add_test(tc_array_init_and_insert_node_hashed, ut_array_init_and_insert_node_hashed);
+  suite_add_tcase(s, tc_array_init_and_insert_node_hashed);
 
   return s;
 }

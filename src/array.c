@@ -2,6 +2,7 @@
 // Implemented functions for array.h
 
 #include "array.h"
+#include "graph.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +22,17 @@ int initDynArray(DynArray *a, int size){
   a->array = malloc(sizeof(void *) * a->size);
   a->total = 0;
   return 0;
+}
+
+void initDynArrayHashed(DynArray *a){
+  int i;
+  a->size = DEFAULT_SIZE;
+  a->array = (void **)malloc(sizeof(void *) * a->size);
+  a->total = 0;
+  for(i = 0; i < DEFAULT_SIZE; i++)
+  {
+    a->array[i] = NULL;
+  }
 }
 
 //Initialize array based on initial string
@@ -82,6 +94,84 @@ void insertDynArray(DynArray *a, char c){
   }
 }
 
+void insertDynArrayNode(DynArray *a, Node *n)
+{
+  if (a->array != NULL){
+    int size = a->size;
+    int i;
+    while (a->size < a->total+1){
+      a->size *= 2;
+    }
+    a->array = (void**) realloc(a->array, sizeof(void *) * a->size);
+    for (i=size; i<a->size; i++)
+    {
+      a->array[i] = (void *) malloc(sizeof(Node *));
+    }
+    ((Node **)a->array)[a->total] = n;
+    a->total=a->total+1; 
+  }
+}
+
+void insertDynArrayNodeHashed(DynArray *a, Node *n)
+{
+  if (a->array != NULL){
+    int size = a->size;
+    int i;
+    a->total += 1;
+    if (a->size < a->total+1){
+      while (a->size < a->total+1){
+        a->size *= 2;
+      }
+      a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
+      for (i=size; i<a->size; i++)
+      {
+	a->array[i] = NULL;
+      }
+      for (i=0; i<size; i++)
+      {
+	Node *toReinsert;
+        if (a->array[i] != NULL)
+	{
+	  a->total -= 1;
+	  toReinsert = ((Node **)a->array)[i];
+	  a->array[i] = NULL;
+	  insertDynArrayNodeHashed(a, toReinsert);
+	}
+      }
+    }
+    else {
+      if (a->array[n->key % a->size] == NULL){
+        a->array[n->key % a->size] = (void *) malloc(sizeof(Node *));
+        ((Node **)a->array)[n->key % a->size] = n;
+      }
+      else {
+	int j = 0;
+	while (a->array[(n->key + j) % a->size] != NULL && ((Node **)a->array)[(n->key + j) % a->size]->key == n->key){
+	  j++;
+	}
+        a->array[(n->key + j) % a->size] = (void *) malloc(sizeof(Node *));
+        ((Node **)a->array)[n->key % a->size] = n;
+      }
+    }
+  }
+}
+
+Node *lookupDynArrayNodeHashed(DynArray *a, char c)
+{
+  if (a->array != NULL){
+    int keyName = c;
+    while (((Node **)a->array)[keyName % a->size] != NULL && ((Node **)a->array)[keyName % a->size]->key != c && keyName != c+a->size){
+      keyName++;
+    }
+    if (a->array[keyName % a->size] != NULL && ((Node *)((Node **)a->array)[keyName % a->size])->key == c){
+        return (Node*)((Node **)a->array)[keyName % a->size];
+    }
+    else
+      return NULL;
+  }
+  return NULL;
+}
+
 //Remove items based on size, items removed from end
 void removeDynArray(DynArray *a, int remove){
   int newsize = a->total-remove;
@@ -128,6 +218,17 @@ char *DynArrayToStr(DynArray *a){
   int i;
   for (i = 0; i < a->total; i++){
     return_string[i] = *(char *) a->array[i];
+  }
+  return_string[i] = '\0';
+  return return_string;
+}
+
+//Convert DynArray to a string
+char *DynArrayToStrNode(DynArray *a){
+  char* return_string = malloc(sizeof(char) * (a->total+1));
+  int i;
+  for (i = 0; i < a->total; i++){
+    return_string[i] = ((Node *)((Node **) a->array)[i])->key;
   }
   return_string[i] = '\0';
   return return_string;

@@ -4,12 +4,12 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 #include <stdlib.h>
-#define NEXT_ARR_SIZE 26
+#define INIT_ARRAY_SIZE 2
 
 typedef struct Node {
   char         key;
   int          isword;
-  struct Node  *next[NEXT_ARR_SIZE];
+  void *characterArray;
 } Node;
 
 void init_graph(Node *n);
