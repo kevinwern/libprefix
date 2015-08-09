@@ -7,9 +7,9 @@
 #define INIT_ARRAY_SIZE 2
 
 typedef struct Node {
-  char         key;
-  int          isword;
-  void *characterArray;
+  char key;
+  int  isword;
+  void *next;
 } Node;
 
 void init_graph(Node *n);

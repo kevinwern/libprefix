@@ -33,10 +33,22 @@ void insertDynArrayStr(DynArray *a, char *str);
 void insertDynArray(DynArray *a, char c);
 
 //Insert node into array (for graph)
-void insertDynArrayNode(DynArray *a, Node* n);
+void insertDynArrayNode(DynArray *a, Node *n);
 
 //Insert node into array hashed (for graph)
 void insertDynArrayNodeHashed(DynArray *a, Node* n);
+
+static void resizeArray(DynArray *a, int size);
+
+static void findHashKeyAndDoInsert(DynArray *a, Node *n);
+
+static void rekeyHashedArray(DynArray *a);
+
+static int lookupDynArrayIndexHashed(DynArray *a, char c);
+
+static void findHashKeyAndDoDelete(DynArray *a, char c);
+
+void removeDynArrayNodeHashed(DynArray *a, char c);
 
 //Lookup char
 Node *lookupDynArrayNodeHashed(DynArray *a, char key);

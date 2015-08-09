@@ -5,7 +5,7 @@
 #include "array.h"
 #include "graph.h"
 
-void init_graph (Node* n){
+void init_graph (Node *n){
   int i;
   DynArray *array = malloc(sizeof(DynArray));
   initDynArrayHashed(array);
@@ -23,7 +23,7 @@ void init_graph (Node* n){
   n->next[i] = NULL;
 }*/
 
-int is_leaf (Node * n){
+int is_leaf (Node *n){
    return ((DynArray *)n->next)->total == 0;
 }
 
@@ -59,26 +59,34 @@ int insert_word (Node *graph, char *word)
   return 0;
 }
 
-/** // Remove a word in the set
-int delete_word (Node * graph, char *word){
-  Node *lastword;
-  while (*word != '\0' && graph != NULL){
-    if (graph->isword)
-      lastword = graph;
-    graph = graph->next[character_hash (*word)];
-    word++;
+ // Remove a word in the set
+int delete_word (Node *graph, char *word){
+  char *wordcopy = word, *startingchar = "\0";
+  Node *lastword, *searchPointer = graph;
+  while (*wordcopy != '\0' && searchPointer != NULL){
+    if (searchPointer->isword && ((DynArray *)(searchPointer->next))->total == 1){
+      lastword = searchPointer;
+      startingchar = wordcopy;
+    }
+    searchPointer = lookupDynArrayNodeHashed((DynArray *)(searchPointer->next), *wordcopy);
+    wordcopy++;
   }
-  if (graph == NULL)
+  if (searchPointer == NULL)
     return 1;
-  graph->isword = 0;
-  if (is_leaf (graph)){
-    while (lastword != NULL){
-      Node *temp = graph;
+  searchPointer->isword = 0;
+  if (is_leaf(searchPointer)){
+    Node *previous;
+    while (*startingchar != '\0'){
+      previous = lastword;
+      lastword = lookupDynArrayNodeHashed((DynArray *)(lastword->next), *startingchar);
+      removeDynArrayNodeHashed((DynArray *)(previous->next), *startingchar);
+      startingchar++;
     }
   }
+  return 0;
 }
 
-void print_graph (Node * graph){
+/*void print_graph (Node * graph){
   DynArray word;
   Node *path = graph;
   Node *pivot =NULL;

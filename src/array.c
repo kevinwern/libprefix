@@ -1,6 +1,6 @@
 // libprefix array.c
 // Implemented functions for array.h
-//
+ 
 #include "array.h"
 #include "graph.h"
 #include <stdio.h>
@@ -9,11 +9,13 @@
 
 //Initialize all array values to empty
 void nullDynArray(DynArray *a){
+  int i;
   a->size = DEFAULT_SIZE;
   a->total = 0;
   a->array = malloc(sizeof(void *) * DEFAULT_SIZE);
-  a->array[1] = NULL;
-  a->array[2] = NULL;
+  for (i = 0; i < DEFAULT_SIZE; i++){
+    a->array[i] = NULL;
+  }
 }
 
 //Initialize array based on size
@@ -82,10 +84,11 @@ void insertDynArrayStr(DynArray *a, char *str){
 void insertDynArray(DynArray *a, char c){
   if (a->array != NULL){
     int size = a->size;
-int i;
+    int i;
     while (a->size < a->total+1){
-}
-    a->array = (void**) realloc(a->array, sizeof(void *) * a->size);
+      a->size *= 2;
+    }
+    a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
     for (i=size; i<a->size; i++)
     {
       a->array[i] = (void *) malloc(sizeof(char));
@@ -117,45 +120,85 @@ void insertDynArrayNodeHashed(DynArray *a, Node *n)
 {
   if (a->array != NULL){
     int size = a->size;
-    int i;
-    a->total += 1;
-    if (a->size < a->total){
-      while (a->size < a->total){
-        a->size *= 2;
+    if (size < a->total + 1){
+      while (size < a->total + 1){
+        size *= 2;
       }
-      a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
-      for (i=size; i<a->size; i++)
-      {
+      resizeArray(a, size);
+      rekeyHashedArray(a);
+    }
+    findHashKeyAndDoInsert(a, n);
+  }
+}
+
+static void rekeyHashedArray(DynArray *a)
+{
+  if (a->array != NULL){
+    Node **itemsCollected = (Node **) malloc(a->total * sizeof(Node *));
+    int i, j = 0;
+    a->total = 0;
+    for (i = 0; i < a->size; i++) {
+      if (a->array[i] != NULL) {
+        itemsCollected[j] = ((Node **)a->array)[i];
 	a->array[i] = NULL;
-      }
-      for (i=0; i<size; i++)
-      {
-	Node *toReinsert;
-        if (a->array[i] != NULL)
-	{
-	  a->total -= 1;
-	  toReinsert = ((Node **)a->array)[i];
-	  a->array[i] = NULL;
-	  insertDynArrayNodeHashed(a, toReinsert);
-	}
+        j++;
       }
     }
-    else {
-      if (a->array[n->key % a->size] == NULL){
-        ((Node **)a->array)[n->key % a->size] = n;
-      }
-      else {
-	int j = 0;
-	while (a->array[(n->key + j) % a->size] != NULL && ((Node **)a->array)[(n->key + j) % a->size]->key == n->key){
-	  j++;
-	}
-	if (((Node **)a->array)[(n->key+j) % a->size]->key != n->key)
-	{
-	  ((Node **)a->array)[n->key % a->size] = n;
-	}
-      }
+    for (i = 0; i < j; i++)
+    {
+      findHashKeyAndDoInsert(a, itemsCollected[i]);
     }
   }
+}
+
+static void findHashKeyAndDoInsert(DynArray *a, Node *n)
+{
+  int j = 0, hashKey = n->key % a->size;
+  Node **nodeArray = (Node **) a->array;
+  if (nodeArray[hashKey] == NULL){
+    nodeArray[hashKey] = n;
+    a->total += 1;
+  }
+  else {
+    while (a->array[hashKey] != NULL && ((Node **)a->array)[hashKey]->key != n->key){
+      j++;
+      hashKey = (n->key + j) % a->size;
+    }
+    if (nodeArray[hashKey] == NULL)
+    {
+      nodeArray[hashKey] = n;
+    }
+    else 
+    {
+      free(n);
+      n = nodeArray[hashKey];
+    }
+  }
+}
+
+static void resizeArray(DynArray *a, int size)
+{
+  int i;
+  if (size >= a->size)
+  {
+    a->array = (void **) realloc(a->array, sizeof(void *) * size);
+    for (i = a->size; i < size; i++)
+    {
+      a->array[i] = NULL;
+    }
+  }
+  else
+  {
+    for (i = a->size - 1; i >= size; i--)
+    {
+      if (a->array[i] != NULL){
+        free(a->array[i]);
+        a->array[i] = NULL;
+      }
+    }
+    a->array = (void **) realloc(a->array, sizeof(void *) * size);
+  }
+  a->size = size;
 }
 
 Node *lookupDynArrayNodeHashed(DynArray *a, char c)
@@ -172,6 +215,46 @@ Node *lookupDynArrayNodeHashed(DynArray *a, char c)
       return NULL;
   }
   return NULL;
+}
+
+int lookupDynArrayIndexHashed(DynArray *a, char c)
+{
+  if (a->array != NULL){
+    int keyName = c;
+    while (((Node **)a->array)[keyName % a->size] != NULL && ((Node **)a->array)[keyName % a->size]->key != c && keyName != c+a->size){
+      keyName++;
+    }
+    if (((Node **)a->array)[keyName % a->size] != NULL && ((Node *)((Node **)a->array)[keyName % a->size])->key == c){
+        return keyName % a->size;
+    }
+    else
+      return -1;
+  }
+  return -1;
+}
+
+void removeDynArrayNodeHashed(DynArray *a, char c)
+{
+  if (a->array != NULL)
+  {
+    int size = a->size;
+    if (size/2 >= a->total-1 && size > 2)
+    {
+      while (size/2 >= a->total-1 && size > 2){
+	size /= 2;
+      }
+    }
+//    findHashKeyAndDoDelete(a, c);
+    a->total -= 1;
+    resizeArray(a, size);
+  }
+}
+
+void findHashKeyAndDoDelete(DynArray *a, char c)
+{
+  int indexToDelete = lookupDynArrayIndexHashed(a, c);
+  free(a->array[indexToDelete]);
+  a->array[indexToDelete] = NULL;
 }
 
 //Remove items based on size, items removed from end

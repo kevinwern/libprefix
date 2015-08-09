@@ -92,15 +92,15 @@ START_TEST (ut_array_init_and_insert_node_hashed)
   DynArray array;
   char i;
   initDynArrayHashed(&array);
-  for (i = 'a'; i <= 'd'; i++){
-    printf("%c\n", i);
+  for (i = 'a'; i <= 'z'; i++){
     Node* node = (Node *) malloc(sizeof(Node));
     node->key = i;
     insertDynArrayNodeHashed(&array, node);
+    printf("%c\n", i);
   }
   Node *checkNode = lookupDynArrayNodeHashed(&array, 'b');
   ck_assert_msg(checkNode->key == 'b');
-  checkNode = lookupDynArrayNodeHashed(&array, 'g');
+  checkNode = lookupDynArrayNodeHashed(&array, '1');
   ck_assert_msg(checkNode == NULL);
 }
 END_TEST
@@ -112,7 +112,7 @@ Suite *array_suite(void)
   TCase *tc_array_init_str = tcase_create("unit_test_array_init_string");
   tcase_add_test(tc_array_init_str, ut_array_init_str_works);
   suite_add_tcase(s, tc_array_init_str);
-  TCase *tc_array_init_size = tcase_create("unit_test_array_init_size");
+/*  TCase *tc_array_init_size = tcase_create("unit_test_array_init_size");
   tcase_add_test(tc_array_init_size, ut_array_init_size_works);
   suite_add_tcase(s, tc_array_init_str);
   TCase *tc_array_init_and_insert_char_works = tcase_create("unit_test_array_init_and_insert_char_works");
@@ -133,7 +133,7 @@ Suite *array_suite(void)
   TCase *tc_array_init_and_insert_node_hashed = tcase_create("unit_test_array_init_and_insert_node_hashed");
   tcase_add_test(tc_array_init_and_insert_node_hashed, ut_array_init_and_insert_node_hashed);
   suite_add_tcase(s, tc_array_init_and_insert_node_hashed);
-
+*/
   return s;
 }
 
