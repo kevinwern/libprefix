@@ -1,6 +1,6 @@
 // libprefix array.c
 // Implemented functions for array.h
-
+//
 #include "array.h"
 #include "graph.h"
 #include <stdio.h>
@@ -12,6 +12,8 @@ void nullDynArray(DynArray *a){
   a->size = DEFAULT_SIZE;
   a->total = 0;
   a->array = malloc(sizeof(void *) * DEFAULT_SIZE);
+  a->array[1] = NULL;
+  a->array[2] = NULL;
 }
 
 //Initialize array based on size
@@ -80,10 +82,9 @@ void insertDynArrayStr(DynArray *a, char *str){
 void insertDynArray(DynArray *a, char c){
   if (a->array != NULL){
     int size = a->size;
-    int i;
+int i;
     while (a->size < a->total+1){
-      a->size *= 2;
-    }
+}
     a->array = (void**) realloc(a->array, sizeof(void *) * a->size);
     for (i=size; i<a->size; i++)
     {
@@ -118,8 +119,8 @@ void insertDynArrayNodeHashed(DynArray *a, Node *n)
     int size = a->size;
     int i;
     a->total += 1;
-    if (a->size < a->total+1){
-      while (a->size < a->total+1){
+    if (a->size < a->total){
+      while (a->size < a->total){
         a->size *= 2;
       }
       a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
@@ -141,7 +142,6 @@ void insertDynArrayNodeHashed(DynArray *a, Node *n)
     }
     else {
       if (a->array[n->key % a->size] == NULL){
-        a->array[n->key % a->size] = (void *) malloc(sizeof(Node *));
         ((Node **)a->array)[n->key % a->size] = n;
       }
       else {
@@ -149,8 +149,10 @@ void insertDynArrayNodeHashed(DynArray *a, Node *n)
 	while (a->array[(n->key + j) % a->size] != NULL && ((Node **)a->array)[(n->key + j) % a->size]->key == n->key){
 	  j++;
 	}
-        a->array[(n->key + j) % a->size] = (void *) malloc(sizeof(Node *));
-        ((Node **)a->array)[n->key % a->size] = n;
+	if (((Node **)a->array)[(n->key+j) % a->size]->key != n->key)
+	{
+	  ((Node **)a->array)[n->key % a->size] = n;
+	}
       }
     }
   }
@@ -163,7 +165,7 @@ Node *lookupDynArrayNodeHashed(DynArray *a, char c)
     while (((Node **)a->array)[keyName % a->size] != NULL && ((Node **)a->array)[keyName % a->size]->key != c && keyName != c+a->size){
       keyName++;
     }
-    if (a->array[keyName % a->size] != NULL && ((Node *)((Node **)a->array)[keyName % a->size])->key == c){
+    if (((Node **)a->array)[keyName % a->size] != NULL && ((Node *)((Node **)a->array)[keyName % a->size])->key == c){
         return (Node*)((Node **)a->array)[keyName % a->size];
     }
     else

@@ -7,12 +7,12 @@
 
 void init_graph (Node* n){
   int i;
-  for (i = 0; i < NEXT_ARR_SIZE; i++){
-      n->next[i] = NULL;
-  }
+  DynArray *array = malloc(sizeof(DynArray));
+  initDynArrayHashed(array);
+  n->next = array;
 }
 
-void reinit_graph (Node* n){
+/*void reinit_graph (Node* n){
   int i;
   for (i = 0; i < NEXT_ARR_SIZE; i++) {
     if (n->next[i] != NULL) {
@@ -21,54 +21,45 @@ void reinit_graph (Node* n){
     }
   }
   n->next[i] = NULL;
-}
-
-// Character hash
-int character_hash (char c){
-  return c % 26;
-}
+}*/
 
 int is_leaf (Node * n){
-  int i;
-  for (i = 0; i < NEXT_ARR_SIZE; i++){
-      if (n->next != NULL)
-	return 0;
-  }
-  return 1;
+   return ((DynArray *)n->next)->total == 0;
 }
 
 // Look up a given word in the set
 // Params: a node, a word
-int find_word (Node * graph, char *word){
-  while (*word != '\0' && graph != NULL){
-      graph = graph->next[character_hash (*word)];
+int find_word (Node *graph, char *word){
+  Node *searchPointer = graph;
+  while (*word != '\0' && searchPointer != NULL){
+      searchPointer = lookupDynArrayNodeHashed((DynArray *)(searchPointer->next), *word);
       word++;
   }
-  if (*word != '\0' || graph == NULL)
+  if (*word != '\0' || searchPointer == NULL)
     return 0;
   else
-    return graph->isword;
+    return searchPointer->isword;
 }
 
 // Insert a new word into the set
 // Params: a node, a word
-int insert_word (Node * graph, char *word)
+int insert_word (Node *graph, char *word)
 {
+  Node *searchPointer = graph, *newest;
   while (*word != '\0'){
-      if (graph->next[character_hash (*word)] == NULL){
-        Node *newest = malloc (sizeof (Node));
-	init_graph (newest);
-	newest->isword = 0;
-	graph->next[character_hash (*word)] = newest;
-      }
-      graph = graph->next[character_hash (*word)];
-      word++;
+    newest = (Node *) malloc(sizeof (Node));
+    init_graph (newest);
+    newest->isword = 0;
+    newest->key = *word;
+    insertDynArrayNodeHashed((DynArray *)(searchPointer->next), newest);
+    searchPointer = lookupDynArrayNodeHashed((DynArray *)(searchPointer->next), *word);
+    word++;
   }
-  graph->isword = 1;
+  searchPointer->isword = 1;
   return 0;
 }
 
-// Remove a word in the set
+/** // Remove a word in the set
 int delete_word (Node * graph, char *word){
   Node *lastword;
   while (*word != '\0' && graph != NULL){
@@ -124,4 +115,4 @@ void print_graph (Node * graph){
       i++;
     }
   }
-}
+}*/

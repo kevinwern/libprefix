@@ -92,14 +92,14 @@ START_TEST (ut_array_init_and_insert_node_hashed)
   DynArray array;
   char i;
   initDynArrayHashed(&array);
-  for (i = 'a'; i <= 'e'; i++){
+  for (i = 'a'; i <= 'd'; i++){
+    printf("%c\n", i);
     Node* node = (Node *) malloc(sizeof(Node));
     node->key = i;
     insertDynArrayNodeHashed(&array, node);
   }
-  ck_assert_msg(((Node*)((Node **)array.array)[1])->key == 'a', (Node*)((Node **)array.array)[1]);
-  Node *checkNode = lookupDynArrayNodeHashed(&array, 'c');
-  ck_assert_msg(checkNode->key == 'c');
+  Node *checkNode = lookupDynArrayNodeHashed(&array, 'b');
+  ck_assert_msg(checkNode->key == 'b');
   checkNode = lookupDynArrayNodeHashed(&array, 'g');
   ck_assert_msg(checkNode == NULL);
 }
