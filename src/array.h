@@ -1,71 +1,65 @@
-// array.h
-// assigning string length based on characters
+// array.h -- DynArray
+// A variable-size structure handling any type of variable
 #ifndef ARRAY_H
 #define ARRAY_H
 #define DEFAULT_SIZE 2
 #include "graph.h"
 
+enum ArrayType {
+  CONTINUOUS;
+  NON_CONTINUOUS;
+};
+
 typedef struct DynArray {
+  ArrayType type;
   void **array;
   int  size;
   int  total;
-
 } DynArray;
 
-//Make array null
-void nullDynArray(DynArray *a);
-
 //Initialize array based on size
-int initDynArray(DynArray *a, int size);
+int init_dyn_array(DynArray *a, int size);
 
-//Initialize array based on initial string
-int initDynArrayStr(DynArray *a, char *str);
-
-void initDynArrayHashed(DynArray *a);
+//Initialize array for hash table
+void init_dyn_array_hashed(DynArray *a);
 
 //Remove last item in array, returning that item
-char popDynArray(DynArray *a);
-
-//Insert items into array
-void insertDynArrayStr(DynArray *a, char *str);
+char pop_dyn_array(DynArray *a);
 
 //Insert single character into array
-void insertDynArray(DynArray *a, char c);
-
-//Insert node into array (for graph)
-void insertDynArrayNode(DynArray *a, Node *n);
+void insert_dyn_array_char(DynArray *a, char c);
 
 //Insert node into array hashed (for graph)
-void insertDynArrayNodeHashed(DynArray *a, Node* n);
-
-static void resizeArray(DynArray *a, int size);
-
-static void findHashKeyAndDoInsert(DynArray *a, Node *n);
-
-static void rekeyHashedArray(DynArray *a);
-
-static int lookupDynArrayIndexHashed(DynArray *a, char c);
-
-static void findHashKeyAndDoDelete(DynArray *a, char c);
-
-void removeDynArrayNodeHashed(DynArray *a, char c);
+void insert_dyn_array_node_hashed(DynArray *a, Node* n);
 
 //Lookup char
-Node *lookupDynArrayNodeHashed(DynArray *a, char key);
+Node *lookup_dyn_array_node_hashed(DynArray *a, char key);
 
 //Remove items based on size, items removed from end
-void removeDynArray(DynArray *a, int remove);
+void remove_dyn_array(DynArray *a, int remove);
 
 //Free dynamic array structure
-void clearDynArray(DynArray *a);
+void clear_dyn_array(DynArray *a);
 
 //Print contents of DynArray
-void printDynArray(DynArray *a);
+void print_dyn_array(DynArray *a);
 
 //Convert DynArray to string
-char *DynArrayToStr(DynArray *a);
+char *dyn_array_to_str(DynArray *a);
 
 //Print contents of DynArray of nodes
-char *DynArrayToStrNode(DynArray *a);
+char *dyn_array_to_str_node(DynArray *a);
+
+static void resize_array(DynArray *a, int size);
+
+static void find_hash_key_and_do_insert(DynArray *a, Node *n);
+
+static void rekey_hashedarray(DynArray *a);
+
+static int lookup_dyn_array_index_hashed(DynArray *a, char c);
+
+static void find_hash_key_and_do_delete(DynArray *a, char c);
+
+void remove_dyn_array_node_hashed(DynArray *a, char c);
 
 #endif
