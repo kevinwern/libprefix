@@ -3,38 +3,44 @@
  
 #include "array.h"
 #include "graph.h"
+#include "error.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-//Initialize array, optionally based on size;
-int init_dyn_array(DynArray *a, int size = DEFAULT_SIZE){
+// Initialize array, optionally based on size and type.
+int init_dyn_array3(DynArray *a, int size, ArrayType type){
   int i;
-  a->size = DEFAULT_SIZE;
-  while (a->size<size)
+  a->size = size;
+  a->type = type;
+  while (a->size<size) {
     a->size *= 2;
+  }
   a->total = 0;
   a->array = malloc(sizeof(void *) * a->size);
-  for (i = 0; i < DEFAULT_SIZE; i++){
+  for (i = 0; i < size; i++){
     a->array[i] = NULL;
   }
   return 0;
 }
 
-void init_dyn_array_hashed(DynArray *a, int size = DEFAULT_SIZE){
-  int i;
-  a->size = DEFAULT_SIZE;
-  while (a->size<size)
-    a->size *= 2;
-  a->array = (void **)malloc(sizeof(void *) * a->size);
-  a->total = 0;
-  for(i = 0; i < DEFAULT_SIZE; i++)
-  {
-    a->array[i] = NULL;
-  }
+int init_dyn_array2(DynArray *a, int size)
+{
+  init_dyn_array3(a, size, CONTINUOUS);
 }
 
-void insert_dyn_array_char(DynArray *a, char c){
+int init_dyn_array1(DynArray *a)
+{
+  init_dyn_array3(a, DEFAULT_SIZE, CONTINUOUS);
+}
+
+// Add character after last assigned member.
+int append_dyn_array_char(DynArray *a, char c){
+  if (a->type != CONTINUOUS)
+  {
+    libprefix_set_error(INCORRECT_ARR_TYPE);
+    return -1;
+  }
   if (a->array != NULL){
     int size = a->size;
     int i;
@@ -48,73 +54,94 @@ void insert_dyn_array_char(DynArray *a, char c){
     }
     *(char *)((char **)a->array)[a->total] = c;
     a->total=a->total+1;
+    return 0;
   }
-}
-
-void insert_dyn_array_node(DynArray *a, Node *n)
-{
-  if (a->array != NULL){
-    int size = a->size;
-    int i;
-    while (a->size < a->total+1){
-      a->size *= 2;
-    }
-    a->array = (void**) realloc(a->array, sizeof(void *) * a->size);
-    for (i=size; i<a->size; i++)
-    {
-      a->array[i] = (void *) malloc(sizeof(Node *));
-    }
-    ((Node **)a->array)[a->total] = n;
-    a->total=a->total+1; 
-  }
-}
-
-void insert_dyn_array_node_hashed(DynArray *a, Node *n)
-{
-  if (a->array != NULL){
-    int size = a->size;
-    if (size < a->total + 1){
-      while (size < a->total + 1){
-        size *= 2;
-      }
-      resizeArray(a, size);
-      rekeyHashedArray(a);
-    }
-    findHashKeyAndDoInsert(a, n);
-  }
-}
-
-Node *lookup_dyn_array_node_hashed(DynArray *a, char c)
-{
-  if (a->array != NULL){
-    int keyName = c;
-    while (((Node **)a->array)[keyName % a->size] != NULL && ((Node **)a->array)[keyName % a->size]->key != c && keyName != c+a->size){
-      keyName++;
-    }
-    if (((Node **)a->array)[keyName % a->size] != NULL && ((Node *)((Node **)a->array)[keyName % a->size])->key == c){
-        return (Node*)((Node **)a->array)[keyName % a->size];
-    }
-    else
-      return NULL;
-  }
-  return NULL;
-}
-
-void remove_dyn_array_node_hashed(DynArray *a, char c)
-{
-  if (a->array != NULL)
+  else 
   {
-    int size = a->size;
-    if (size/2 >= a->total-1 && size > 2)
-    {
-      while (size/2 >= a->total-1 && size > 2){
-	size /= 2;
-      }
-    }
-    findHashKeyAndDoDelete(a, c);
-    a->total -= 1;
-    resizeArray(a, size);
+    libprefix_set_error(ARR_NOT_INIT);
+    return -1;
   }
+}
+
+// Insert node at any point in DynArray
+int insert_dyn_array_node(DynArray *a, Node *n, int index)
+{
+  if (a->type != NONCONTINUOUS) {
+    libprefix_set_error(INCORRECT_ARR_TYPE);
+    return -1;
+  }
+  if (a->array != NULL) {
+    if (a->size <= index || index < 0) {
+      libprefix_set_error(INVALID_INDEX);
+      return -1; 
+    }
+    if (a->array[index] != NULL) {
+      free(a->array[index]);
+    }
+    a->array[index] = n;
+  }
+  else {
+    libprefix_set_error(ARR_NOT_INIT);
+    return -1;
+  }
+}
+
+// Lookup character at any point in DynArray
+char lookup_dyn_array_char(DynArray *a, int index)
+{
+  if (a->array != NULL) {
+    if (a->size <= index || index < 0) {
+      libprefix_set_error(INVALID_INDEX);
+      return -1;
+    }
+    else {
+      return *(char*) a->array[index];
+    }
+  }
+}
+
+// Lookup Node at any point in DynArray
+Node *lookup_dyn_array_node(DynArray *a, int index)
+{
+  if (a->array != NULL) {
+    if (a->size <= index || index < 0) {
+      libprefix_set_error(INVALID_INDEX);
+      return -1;
+    }
+    else {
+      return (Node *) a->array[index];
+    }
+  }
+}
+
+// Delete Node from any point in DynArray
+int delete_dyn_array_node(DynArray *a, int index)
+{
+  if (a->array != NULL) {
+    if (a->size <= index || index < 0) {
+      libprefix_set_error(INVALID_INDEX);
+      return -1;
+    }
+    else if (a->array[index] == NULL) {
+      libprefix_set_error(KEY_NOT_FOUND);
+      return -1;
+    }
+    else {
+      free(a->array[index]);
+      a->array[index] = NULL;
+      return 0;
+    }
+  }
+  else {
+    libprefix_set_error(ARR_NOT_INIT);
+    return -1;
+  }
+}
+
+// Delete Node from any point in DynArray
+int delete_dyn_array_char(DynArray *a, int index)
+{
+  return delete_dyn_array_node(a, index);
 }
 
 //Remove items based on size, items removed from end
@@ -131,24 +158,29 @@ void remove_dyn_array(DynArray *a, int remove){
 
 //returns last character in array
 char pop_dyn_array(DynArray *a){
-  if (a->total == 0) return 0;
+  if (a->total == 0) {
+    libprefix_set_error(INSUFFICIENT_TOTAL);
+    return -1;
+  }
 
-  int newsize = a->total-1;
-  if (a->array != NULL && newsize >=0){
-    while (a->size / 2 > newsize){
-      a->size /= 2;
+  if (a->array != NULL) {
+    int size = a->size;
+    int a->total = a->total-1;
+    int indexToReturn = a->total;
+    char toReturn = *(char *) a->array[indexToReturn];
+    while (size / 2 >= total  && size > MIN_SIZE){
+      size /= 2;
     }
-    char toReturn = *(char *)((char **)a->array)[a->total-1];
-    a->total = newsize;
-    a->array = realloc(a->array, sizeof(void *) * a->size);
+    resize_array(a, size)
     return toReturn;
   }
   else {
-    return 0;
-  }	  
+    libprefix_set_error(ARR_NOT_INIT);
+    return -1;
+  }
 }
 
-//Print contents of a DynArray
+// Print contents of a DynArray
 void print_dyn_array(DynArray *a){
   int i;
   for (i = 0; i < a->total; i++){
@@ -157,8 +189,13 @@ void print_dyn_array(DynArray *a){
   printf("\n");
 }
 
-//Convert DynArray to a string
+// Convert DynArray to a string
 char *dyn_array_to_str(DynArray *a){
+  if (a->type != CONTINUOUS)
+  {
+    libprefix_set_error(INCORRECT_ARR_TYPE);
+    return -1;
+  }
   char* return_string = malloc(sizeof(char) * (a->total+1));
   int i;
   for (i = 0; i < a->total; i++){
@@ -168,7 +205,7 @@ char *dyn_array_to_str(DynArray *a){
   return return_string;
 }
 
-//Free dynamic array structure
+// Free dynamic array structure
 void clear_dyn_array(DynArray *a){
   if (a->size != 0){
     free(a->array);
@@ -178,96 +215,29 @@ void clear_dyn_array(DynArray *a){
   }
 }
 
-static void rekey_hashed_array(DynArray *a)
-{
-  if (a->array != NULL){
-    Node **itemsCollected = (Node **) malloc(a->total * sizeof(Node *));
-    int i, j = 0;
-    a->total = 0;
-    for (i = 0; i < a->size; i++) {
-      if (a->array[i] != NULL) {
-        itemsCollected[j] = ((Node **)a->array)[i];
-	a->array[i] = NULL;
-        j++;
-      }
-    }
-    for (i = 0; i < j; i++)
-    {
-      findHashKeyAndDoInsert(a, itemsCollected[i]);
-    }
-  }
-}
-
-static void find_hash_key_and_do_insert(DynArray *a, Node *n)
-{
-  int j = 0, hashKey = n->key % a->size;
-  Node **nodeArray = (Node **) a->array;
-  if (nodeArray[hashKey] == NULL){
-    nodeArray[hashKey] = n;
-    a->total += 1;
-  }
-  else {
-    while (a->array[hashKey] != NULL && ((Node **)a->array)[hashKey]->key != n->key){
-      j++;
-      hashKey = (n->key + j) % a->size;
-    }
-    if (nodeArray[hashKey] == NULL)
-    {
-      nodeArray[hashKey] = n;
-    }
-    else 
-    {
-      free(n);
-      n = nodeArray[hashKey];
-    }
-  }
-}
-
-static void resize_array(DynArray *a, int size)
+static int resize_array(DynArray *a, int size)
 {
   int i;
-  if (size >= a->size)
+  if (size < 0)
   {
-    a->array = (void **) realloc(a->array, sizeof(void *) * size);
-    for (i = a->size; i < size; i++)
-    {
-      a->array[i] = NULL;
+    libprefix_set_error(INVALID_SIZE);
+    return -1;
+  }
+  if (size >= a->size) {
+    a->array = realloc(a->array, sizeof(void *) * size);
+    for (i = a->size; i < size; i++) {
+       a->array[i] = NULL;
     }
   }
-  else
-  {
-    for (i = a->size - 1; i >= size; i--)
-    {
-      if (a->array[i] != NULL){
+  else {
+    for (i = a->size - 1; i >= size; i--) {
+      if (a->array[i] != NULL) {
         free(a->array[i]);
         a->array[i] = NULL;
       }
     }
-    a->array = (void **) realloc(a->array, sizeof(void *) * size);
+    a->array = realloc(a->array, sizeof(void *) * size);
   }
   a->size = size;
+  return 0;
 }
-
-static int lookup_dyn_array_index_hashed(DynArray *a, char c)
-{
-  if (a->array != NULL){
-    int keyName = c;
-    while (((Node **)a->array)[keyName % a->size] != NULL && ((Node **)a->array)[keyName % a->size]->key != c && keyName != c+a->size){
-      keyName++;
-    }
-    if (((Node **)a->array)[keyName % a->size] != NULL && ((Node *)((Node **)a->array)[keyName % a->size])->key == c){
-        return keyName % a->size;
-    }
-    else
-      return -1;
-  }
-  return -1;
-}
-
-static void find_hash_key_and_do_delete(DynArray *a, char c)
-{
-  int indexToDelete = lookupDynArrayIndexHashed(a, c);
-  free(a->array[indexToDelete]);
-  a->array[indexToDelete] = NULL;
-}
-
