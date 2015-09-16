@@ -7,137 +7,126 @@
 #include <string.h>
 #include "../src/array.h"
 #include "../src/graph.h"
-//#define TEST_SIZE 5
-//#define TEST_STRING "peanuts"
 
-START_TEST (ut_array_init_str_works){
-  DynArray array;
-  initDynArrayStr(&array, "peanut");
-  ck_assert_msg(array.size == 8);
-  ck_assert_msg(array.total == 6);
+DynArray test_array;
 
+void setup (void)
+{
+  init_dyn_array(&test_array);
+}
+
+void teardown (void)
+{
+  clear_dyn_array(&test_array);
+}
+
+START_TEST (ut_array_init)
+{
+  DynArray array, array2, array3;
+  int custom_size = 8;
+  init_dyn_array(&array);
+  ck_assert_msg(array.size == DEFAULT_SIZE,
+    "One-parameter call to init_dyn_array did not set size to DEFAULT_SIZE. Got size %d.", array.size);
+  ck_assert_msg(array.type == CONTINUOUS,
+    "One-parameter call to init_dyn_array did not set type to CONTINUOUS.");
+  init_dyn_array(&array2, NON_CONTINUOUS);
+  ck_assert_msg(array2.size == DEFAULT_SIZE,
+    "Two-parameter call to init_dyn_array did not set size to DEFAULT_SIZE. Got size %d.", array.size);
+  ck_assert_msg(array2.type == NON_CONTINUOUS,
+    "Two-parameter call to init_dyn_array did not set type to prescribed NON_CONTINUOUS.");
+  init_dyn_array(&array3, NON_CONTINUOUS, custom_size);
+  ck_assert_msg(array3.size == custom_size,
+    "Three-parameter call to init_dyn_array did not set size to prescribed value %d. Got size %d.", 
+    custom_size, array.size);
+  ck_assert_msg(array3.type == NON_CONTINUOUS,
+    "Three-parameter call to init_dyn_array did not set type to prescribed NON_CONTINUOUS.");
 }
 END_TEST
 
-START_TEST (ut_array_init_size_works)
+START_TEST (ut_array_append_char)
 {
-  DynArray array;
-  initDynArray(&array, 3);
-  ck_assert_msg(array.total == 0);
-  ck_assert_msg(array.size == 2);
+  char character_to_insert = 'c', returned_character;
+  int expected_index = 0;
+  append_dyn_array_char(&test_array, character_to_insert);
+  returned_character = lookup_dyn_array_char(&test_array, expected_index);
+  ck_assert_msg(returned_character == character_to_insert,
+    "Insert failed, expected character '%c' at index %d. Got '%c'",
+    character_to_insert, expected_index, returned_character); 
 }
 END_TEST
 
-START_TEST (ut_array_init_and_insert_char_works)
+START_TEST (ut_array_append_pop_char)
 {
-  DynArray array;
-  initDynArrayStr(&array, "peanut");
-  insertDynArray(&array, 's');
-  char *arrayString = DynArrayToStr(&array);
-  ck_assert_msg(strcmp(arrayString, "peanuts") == 0, arrayString);
+  char character_to_insert = 'c', returned_character;
+  int expected_index = 0;
+  append_dyn_array_char(&test_array, character_to_insert);
+  returned_character = pop_dyn_array(&test_array);
+  ck_assert_msg(returned_character == character_to_insert,
+    "Pop failed, expected character '%c' at index %d. Got '%c'",
+    character_to_insert, expected_index, returned_character); 
 }
 END_TEST
 
-START_TEST (ut_array_init_and_add_string_works)
+START_TEST (ut_array_insert_node)
 {
-  DynArray array;
-  initDynArrayStr(&array, "peanut");
-  insertDynArrayStr(&array, "examplestring");
-  char *arrayString = DynArrayToStr(&array);
-  ck_assert_msg(strcmp(arrayString, "peanutexamplestring") == 0, arrayString);
-}
-END_TEST 
-
-START_TEST (ut_array_init_and_remove_char_works)
-{
-  DynArray array;
-  initDynArrayStr(&array, "peanut");
-  removeDynArray(&array, 1);
-  char *arrayString = DynArrayToStr(&array);
-  ck_assert_msg(strcmp(arrayString, "peanu") == 0, arrayString);
-
-  removeDynArray(&array, 4);
-  arrayString = DynArrayToStr(&array);
-  ck_assert_msg(strcmp(arrayString, "p") == 0, arrayString);
+  init_dyn_array(&test_array, NON_CONTINUOUS);
+  int index_to_add = 1;
+  Node node;
+  Node *test_node;
+  insert_dyn_array_node(&test_array, &node, index_to_add);
+  test_node = lookup_dyn_array_node(&test_array, index_to_add);
+  ck_assert_msg(test_node == &node,
+    "Node inserted was not found");
 }
 END_TEST
 
-START_TEST (ut_array_init_and_pop_works)
+START_TEST (ut_array_to_str)
 {
-  DynArray array;
-  initDynArrayStr(&array, "peanut");
-  char name = popDynArray(&array);
-  ck_assert_msg(name == 't');
-  char *arrayString = DynArrayToStr(&array);
-  ck_assert_msg(strcmp(arrayString, "peanu") == 0, arrayString);
-}
-END_TEST
-
-START_TEST (ut_array_init_and_insert_node_basic)
-{
-  DynArray array;
-  Node node1, node2;
-  node1.key = 'a';
-  node2.key = 'b';
-  initDynArray(&array, 0);
-  insertDynArrayNode(&array, &node1);
-  insertDynArrayNode(&array, &node2);
-  char *arrayString = DynArrayToStrNode(&array);
-  ck_assert_msg(strcmp(arrayString, "ab") == 0, arrayString);
-}
-END_TEST
-
-START_TEST (ut_array_init_and_insert_node_hashed)
-{
-  DynArray array;
   char i;
-  initDynArrayHashed(&array);
-  for (i = 'a'; i <= 'z'; i++){
-    Node* node = (Node *) malloc(sizeof(Node));
-    node->key = i;
-    insertDynArrayNodeHashed(&array, node);
-    printf("%c\n", i);
+  int j;
+  char expected[27];
+  char *result;
+  for (i = 'a', j = 0; i <= 'z'; i++, j++)
+  {
+    append_dyn_array_char(&test_array, i);
+    expected[j] = i;
   }
-  Node *checkNode = lookupDynArrayNodeHashed(&array, 'b');
-  ck_assert_msg(checkNode->key == 'b');
-  checkNode = lookupDynArrayNodeHashed(&array, '1');
-  ck_assert_msg(checkNode == NULL);
+  expected[j] = '\0';
+  result = dyn_array_to_str(&test_array);
+  ck_assert_msg(strcmp(expected, result) == 0, 
+    "Array string does not match expected value '%s'. Got '%s'", expected, result);
+  ck_assert_msg(test_array.size == 32);
 }
 END_TEST
 
 Suite *array_suite(void)
 {
-  Suite *s = suite_create("Array Init");
+  Suite *s = suite_create("DynArray");
 
-  TCase *tc_array_init_str = tcase_create("unit_test_array_init_string");
-  tcase_add_test(tc_array_init_str, ut_array_init_str_works);
-  suite_add_tcase(s, tc_array_init_str);
-/*  TCase *tc_array_init_size = tcase_create("unit_test_array_init_size");
-  tcase_add_test(tc_array_init_size, ut_array_init_size_works);
-  suite_add_tcase(s, tc_array_init_str);
-  TCase *tc_array_init_and_insert_char_works = tcase_create("unit_test_array_init_and_insert_char_works");
-  tcase_add_test(tc_array_init_and_insert_char_works, ut_array_init_and_insert_char_works);
-  suite_add_tcase(s, tc_array_init_and_insert_char_works);
-  TCase *tc_array_init_and_add_string_works = tcase_create("unit_test_array_init_and_add_string_works");
-  tcase_add_test(tc_array_init_and_add_string_works, ut_array_init_and_add_string_works);
-  suite_add_tcase(s, tc_array_init_and_add_string_works);
-  TCase *tc_array_init_and_remove_char_works = tcase_create("unit_test_array_init_and_remove_char_works");
-  tcase_add_test(tc_array_init_and_remove_char_works, ut_array_init_and_remove_char_works);
-  suite_add_tcase(s, tc_array_init_and_remove_char_works);
-  TCase *tc_array_init_and_pop_works = tcase_create("unit_test_array_init_and_pop_works");
-  tcase_add_test(tc_array_init_and_pop_works, ut_array_init_and_pop_works);
-  suite_add_tcase(s, tc_array_init_and_pop_works);
-  TCase *tc_array_init_and_insert_node_basic = tcase_create("unit_test_array_init_and_insert_node_basic");
-  tcase_add_test(tc_array_init_and_insert_node_basic, ut_array_init_and_insert_node_basic);
-  suite_add_tcase(s, tc_array_init_and_insert_node_basic);
-  TCase *tc_array_init_and_insert_node_hashed = tcase_create("unit_test_array_init_and_insert_node_hashed");
-  tcase_add_test(tc_array_init_and_insert_node_hashed, ut_array_init_and_insert_node_hashed);
-  suite_add_tcase(s, tc_array_init_and_insert_node_hashed);
-*/
+  TCase *tc_dyn_array = tcase_create("ut_array_init");
+  tcase_add_test(tc_dyn_array, ut_array_init);
+  suite_add_tcase(s, tc_dyn_array);
+  TCase *tc_append_char = tcase_create("ut_array_append_char");
+  tcase_add_test(tc_append_char, ut_array_append_char);
+  suite_add_tcase(s, tc_append_char);
+  tcase_add_checked_fixture(tc_append_char, setup, teardown);
+  TCase *tc_append_pop_char = tcase_create("ut_array_append_pop_char");
+  tcase_add_test(tc_append_pop_char, ut_array_append_pop_char);
+  suite_add_tcase(s, tc_append_pop_char);
+  tcase_add_checked_fixture(tc_append_pop_char, setup, teardown);
+  TCase *tc_insert_node = tcase_create("ut_array_insert_node");
+  tcase_add_test(tc_insert_node, ut_array_insert_node);
+  suite_add_tcase(s, tc_insert_node);
+  tcase_add_checked_fixture(tc_insert_node, setup, teardown);
+  TCase *tc_to_str = tcase_create("ut_array_to_str");
+  tcase_add_test(tc_to_str, ut_array_to_str);
+  tcase_add_checked_fixture(tc_to_str, setup, teardown);
+  suite_add_tcase(s, tc_to_str);
   return s;
 }
 
-int main() {
+int main() 
+{
   int number_failed;
   SRunner *sr = srunner_create(array_suite());
   srunner_run_all(sr, CK_NORMAL);

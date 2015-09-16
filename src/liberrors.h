@@ -1,7 +1,7 @@
 #ifndef ERROR_H
 #define ERROR_H
 
-enum LIBPREFIX_ERROR_STATE {
+typedef enum LIBPREFIX_ERROR_STATE {
   NO_ERROR,		// Default state if no error occurs.
   KEY_NOT_FOUND,	// Key not found in hash table.
   INCORRECT_ARR_TYPE,	// No way to perform operation on type of DynArray.
@@ -9,11 +9,12 @@ enum LIBPREFIX_ERROR_STATE {
   INVALID_INDEX,	// Index outside of DynArray.
   INSUFFICIENT_TOTAL,	// Total assigned members too small for operation.
   INVALID_SIZE		// Size of array is invalid.
-};
-LIBPREFIX_ERROR_STATE LIBPREFIX_ERROR = NO_ERRORS;
+} LIBPREFIX_ERROR_STATE;
+
+extern LIBPREFIX_ERROR_STATE LIBPREFIX_ERROR;
 
 // Get last error that was set.
-LIBPREFIX_ERROR libprefix_error_last();
+LIBPREFIX_ERROR_STATE libprefix_error_last();
 
 // Get human-readable string for error state.
 char *libprefix_strerror(LIBPREFIX_ERROR_STATE state);

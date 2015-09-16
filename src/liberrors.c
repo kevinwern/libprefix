@@ -1,15 +1,17 @@
 #include "liberrors.h"
 
-LIBPREFIX_ERROR libprefix_error_last()
+LIBPREFIX_ERROR_STATE LIBPREFIX_ERROR = NO_ERROR;
+
+LIBPREFIX_ERROR_STATE libprefix_error_last()
 {
   return LIBPREFIX_ERROR;
 }
 
-char *libprefix_strerror(LIBPREFIX_ERROR_STATE state);
+char *libprefix_strerror(LIBPREFIX_ERROR_STATE state)
 {
   switch (state)
   {
-    case NO_ERRORS:
+    case NO_ERROR:
       return "No errors";
     case KEY_NOT_FOUND:
       return "Key not found";
@@ -19,7 +21,8 @@ char *libprefix_strerror(LIBPREFIX_ERROR_STATE state);
       return "Unknown or incorrect code";
   }
 }
-void libprefix_set_error(LIBPREFIX_ERROR_STATE state);
+
+void libprefix_set_error(LIBPREFIX_ERROR_STATE state)
 {
-  return LIBPREFIX_ERROR;
+  LIBPREFIX_ERROR = state;
 }

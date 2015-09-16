@@ -1,17 +1,12 @@
-// libprefix array.c
-// Implemented functions for array.h
- 
-#include "array.h"
-#include "graph.h"
-#include "error.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "array.h"
 
 // Initialize array, optionally based on size and type.
-int init_dyn_array3(DynArray *a, int size, ArrayType type){
+int init_dyn_array3(DynArray *a, ArrayType type, int size){
   int i;
-  a->size = size;
+  a->size = MIN_SIZE;
   a->type = type;
   while (a->size<size) {
     a->size *= 2;
@@ -24,18 +19,19 @@ int init_dyn_array3(DynArray *a, int size, ArrayType type){
   return 0;
 }
 
-int init_dyn_array2(DynArray *a, int size)
+int init_dyn_array2(DynArray *a, ArrayType type)
 {
-  init_dyn_array3(a, size, CONTINUOUS);
+  return init_dyn_array3(a, type, DEFAULT_SIZE);
 }
 
 int init_dyn_array1(DynArray *a)
 {
-  init_dyn_array3(a, DEFAULT_SIZE, CONTINUOUS);
+  return init_dyn_array3(a, CONTINUOUS, DEFAULT_SIZE);
 }
 
 // Add character after last assigned member.
-int append_dyn_array_char(DynArray *a, char c){
+int append_dyn_array_char(DynArray *a, char c)
+{
   if (a->type != CONTINUOUS)
   {
     libprefix_set_error(INCORRECT_ARR_TYPE);
@@ -47,11 +43,15 @@ int append_dyn_array_char(DynArray *a, char c){
     while (a->size < a->total+1){
       a->size *= 2;
     }
-    a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
-    for (i=size; i<a->size; i++)
+    if (size != a->size)
     {
-      a->array[i] = (void *) malloc(sizeof(char));
+      a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
+      for (i=size; i<a->size; i++)
+      {
+        a->array[i] = (char *) malloc(sizeof(char));
+      }
     }
+    if (a->array[a->total] == NULL) a->array[a->total] = (char *) malloc(sizeof(char));
     *(char *)((char **)a->array)[a->total] = c;
     a->total=a->total+1;
     return 0;
@@ -66,7 +66,7 @@ int append_dyn_array_char(DynArray *a, char c){
 // Insert node at any point in DynArray
 int insert_dyn_array_node(DynArray *a, Node *n, int index)
 {
-  if (a->type != NONCONTINUOUS) {
+  if (a->type != NON_CONTINUOUS) {
     libprefix_set_error(INCORRECT_ARR_TYPE);
     return -1;
   }
@@ -79,6 +79,7 @@ int insert_dyn_array_node(DynArray *a, Node *n, int index)
       free(a->array[index]);
     }
     a->array[index] = n;
+    return 0;
   }
   else {
     libprefix_set_error(ARR_NOT_INIT);
@@ -98,6 +99,10 @@ char lookup_dyn_array_char(DynArray *a, int index)
       return *(char*) a->array[index];
     }
   }
+  else {
+    libprefix_set_error(ARR_NOT_INIT);
+    return -1;
+  }
 }
 
 // Lookup Node at any point in DynArray
@@ -106,11 +111,15 @@ Node *lookup_dyn_array_node(DynArray *a, int index)
   if (a->array != NULL) {
     if (a->size <= index || index < 0) {
       libprefix_set_error(INVALID_INDEX);
-      return -1;
+      return NULL;
     }
     else {
-      return (Node *) a->array[index];
+      return (Node *)(((Node **)a->array)[index]);
     }
+  }
+  else {
+    libprefix_set_error(ARR_NOT_INIT);
+    return NULL;
   }
 }
 
@@ -138,7 +147,7 @@ int delete_dyn_array_node(DynArray *a, int index)
   }
 }
 
-// Delete Node from any point in DynArray
+// Delete Node from any point in char
 int delete_dyn_array_char(DynArray *a, int index)
 {
   return delete_dyn_array_node(a, index);
@@ -165,13 +174,12 @@ char pop_dyn_array(DynArray *a){
 
   if (a->array != NULL) {
     int size = a->size;
-    int a->total = a->total-1;
-    int indexToReturn = a->total;
-    char toReturn = *(char *) a->array[indexToReturn];
-    while (size / 2 >= total  && size > MIN_SIZE){
+    a->total = a->total-1;
+    char toReturn = *(char *) a->array[a->total];
+    while (size / 2 >= a->total  && size > MIN_SIZE){
       size /= 2;
     }
-    resize_array(a, size)
+    resize_array(a, size);
     return toReturn;
   }
   else {
@@ -180,21 +188,12 @@ char pop_dyn_array(DynArray *a){
   }
 }
 
-// Print contents of a DynArray
-void print_dyn_array(DynArray *a){
-  int i;
-  for (i = 0; i < a->total; i++){
-    printf("%c", *(char *)a->array[i]);
-  }
-  printf("\n");
-}
-
 // Convert DynArray to a string
 char *dyn_array_to_str(DynArray *a){
   if (a->type != CONTINUOUS)
   {
     libprefix_set_error(INCORRECT_ARR_TYPE);
-    return -1;
+    return NULL;
   }
   char* return_string = malloc(sizeof(char) * (a->total+1));
   int i;
@@ -215,7 +214,7 @@ void clear_dyn_array(DynArray *a){
   }
 }
 
-static int resize_array(DynArray *a, int size)
+int resize_array(DynArray *a, int size)
 {
   int i;
   if (size < 0)

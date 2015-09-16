@@ -8,7 +8,7 @@
 void init_graph (Node *n){
   int i;
   DynArray *array = malloc(sizeof(DynArray));
-  initDynArrayHashed(array);
+  init_dyn_array(array);
   n->next = array;
 }
 
