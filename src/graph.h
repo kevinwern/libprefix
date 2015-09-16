@@ -11,9 +11,7 @@ typedef struct Node {
   void *next;
 } Node;
 
-/**void init_graph(Node *n);
-int character_hash(char c);
-int is_leaf(Node *n);
+void init_graph(Node *n);
 
 // Look up a given word in the set
 // Params: a node, a word
@@ -27,5 +25,8 @@ int insert_word(Node *graph, char *word);
 int delete_word(Node *graph, char *word);
 
 // Print the contents of a set
-void print_graph(Node *graph); */
+void print_graph(Node *graph);
+
+static int is_leaf(Node *n);
+
 #endif

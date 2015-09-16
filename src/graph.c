@@ -2,29 +2,19 @@
 // Set implemented string comparison
 #include <stdlib.h>
 #include <stdio.h>
-#include "array.h"
 #include "graph.h"
+#include "array.h"
+#include "hashtable.h"
 
 void init_graph (Node *n){
   int i;
-  DynArray *array = malloc(sizeof(DynArray));
-  init_dyn_array(array);
-  n->next = array;
+  HashTable *hashtable = malloc(sizeof(HashTable));
+  init_hash_table(hashtable, DEFAULT_SIZE);
+  n->next = hashtable;
 }
 
-/*void reinit_graph (Node* n){
-  int i;
-  for (i = 0; i < NEXT_ARR_SIZE; i++) {
-    if (n->next[i] != NULL) {
-	init_graph (n->next[i]);
-	free (n->next[i]);
-    }
-  }
-  n->next[i] = NULL;
-}*/
-
-int is_leaf (Node *n){
-   return ((DynArray *)n->next)->total == 0;
+static int is_leaf (Node *n){
+   return ((HashTable *)n->next)->array->total == 0;
 }
 
 // Look up a given word in the set
@@ -32,7 +22,7 @@ int is_leaf (Node *n){
 int find_word (Node *graph, char *word){
   Node *searchPointer = graph;
   while (*word != '\0' && searchPointer != NULL){
-      searchPointer = lookupDynArrayNodeHashed((DynArray *)(searchPointer->next), *word);
+      searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
       word++;
   }
   if (*word != '\0' || searchPointer == NULL)
@@ -45,14 +35,10 @@ int find_word (Node *graph, char *word){
 // Params: a node, a word
 int insert_word (Node *graph, char *word)
 {
-  Node *searchPointer = graph, *newest;
+  Node *searchPointer = graph;
   while (*word != '\0'){
-    newest = (Node *) malloc(sizeof (Node));
-    init_graph (newest);
-    newest->isword = 0;
-    newest->key = *word;
-    insertDynArrayNodeHashed((DynArray *)(searchPointer->next), newest);
-    searchPointer = lookupDynArrayNodeHashed((DynArray *)(searchPointer->next), *word);
+    insert_node((HashTable *)(searchPointer->next), *word);
+    searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
     word++;
   }
   searchPointer->isword = 1;
@@ -64,11 +50,11 @@ int delete_word (Node *graph, char *word){
   char *wordcopy = word, *startingchar = "\0";
   Node *lastword, *searchPointer = graph;
   while (*wordcopy != '\0' && searchPointer != NULL){
-    if (searchPointer->isword && ((DynArray *)(searchPointer->next))->total == 1){
+    if (searchPointer->isword && ((HashTable *)(searchPointer->next))->array->total == 1){
       lastword = searchPointer;
       startingchar = wordcopy;
     }
-    searchPointer = lookupDynArrayNodeHashed((DynArray *)(searchPointer->next), *wordcopy);
+    searchPointer = lookup_node((HashTable *)(searchPointer->next), *wordcopy);
     wordcopy++;
   }
   if (searchPointer == NULL)
@@ -78,8 +64,8 @@ int delete_word (Node *graph, char *word){
     Node *previous;
     while (*startingchar != '\0'){
       previous = lastword;
-      lastword = lookupDynArrayNodeHashed((DynArray *)(lastword->next), *startingchar);
-      removeDynArrayNodeHashed((DynArray *)(previous->next), *startingchar);
+      lastword = lookup_node((HashTable *)(lastword->next), *startingchar);
+      delete_node((HashTable *)(previous->next), *startingchar);
       startingchar++;
     }
   }

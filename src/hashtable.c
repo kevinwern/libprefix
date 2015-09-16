@@ -34,8 +34,11 @@ int insert_node(HashTable *h, char c)
   {
     resize_and_rekey_hash_table(h, h->array->size * 2);
   }
-  Node *node = (Node *) malloc(sizeof(node));
+  Node *node = (Node *) malloc(sizeof(Node));
   node->key = c;
+  node->next = (HashTable *) malloc(sizeof(HashTable));
+  init_hash_table((HashTable *) node->next, DEFAULT_SIZE);
+  node->isword = 0;
   int index = find_hash_index(h, c);
   insert_dyn_array_node(h->array, node, index);
   return 0;
