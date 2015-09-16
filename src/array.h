@@ -51,9 +51,6 @@ void clear_dyn_array(DynArray *a);
 //Convert DynArray to string
 char *dyn_array_to_str(DynArray *a);
 
-//Remove node from dyn array
-void remove_dyn_array_node_hashed(DynArray *a, char c);
-
 //Resize array to different size
 static int resize_array(DynArray *a, int size);
 
