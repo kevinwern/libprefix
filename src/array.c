@@ -78,6 +78,9 @@ int insert_dyn_array_node(DynArray *a, Node *n, int index)
     if (a->array[index] != NULL) {
       free(a->array[index]);
     }
+    else {
+      a->total += 1;
+    }
     a->array[index] = n;
     return 0;
   }
@@ -217,8 +220,7 @@ void clear_dyn_array(DynArray *a){
 int resize_array(DynArray *a, int size)
 {
   int i;
-  if (size < 0)
-  {
+  if (size < 0) {
     libprefix_set_error(INVALID_SIZE);
     return -1;
   }

@@ -32,8 +32,6 @@ int insert_node(HashTable *h, char c)
   }
   if (h->array->total == h->array->size)
   {
-    return -1;
-    resize_array(h->array, h->array->size * 2);
     rekey_hash_table(h);
   }
   Node *node = (Node *) malloc(sizeof(node));
@@ -47,15 +45,16 @@ static void rekey_hash_table(HashTable *h)
 {
   Node *current;
   int i;
-  HashTable *new_table = malloc(sizeof(HashTable));
-  init_hash_table(new_table, h->array->size * 2);
-  for (i = 0; i < h->array->size; i++)
+  DynArray *new_array = malloc(sizeof(DynArray));
+  DynArray *old_array = h->array;
+  init_dyn_array(new_array, NON_CONTINUOUS, h->array->size*2);
+  h->array = new_array;
+  for (i = 0; i < old_array->size; i++)
   {
-    current = lookup_dyn_array_node(h->array, i);
-    insert_node(new_table, current->key);
+    current = lookup_dyn_array_node(old_array, i);
+    insert_node(h, current->key);
   }
-  free(h);
-  h = new_table;
+  free(old_array);
 }
 
 static int find_hash_index(HashTable *h, char c)
