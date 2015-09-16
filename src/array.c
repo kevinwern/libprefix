@@ -141,6 +141,7 @@ int delete_dyn_array_node(DynArray *a, int index)
     else {
       free(a->array[index]);
       a->array[index] = NULL;
+      a->total -= 1;
       return 0;
     }
   }
@@ -217,7 +218,7 @@ void clear_dyn_array(DynArray *a){
   }
 }
 
-int resize_array(DynArray *a, int size)
+static int resize_array(DynArray *a, int size)
 {
   int i;
   if (size < 0) {

@@ -44,6 +44,26 @@ START_TEST (ut_hash_table_insert_and_lookup)
     if (result != NULL) ck_assert_msg(result->key == c, "%c != %c", result->key, c);
     else ck_abort_msg("Couldn't find character %c", c);
   }
+  ck_assert_msg(test_hash_table.array->total == 26);
+  ck_assert_msg(test_hash_table.array->size == 32);
+}
+END_TEST
+
+START_TEST (ut_hash_table_insert_and_delete)
+{
+  char c;
+  int i;
+  Node *result;
+  for (c = 'a'; c <= 'z'; c++)
+  {
+    insert_node(&test_hash_table, c);
+  }
+  for (c = 'a'; c <= 'z'; c++)
+  {
+    delete_node(&test_hash_table, c);
+  }
+  ck_assert_msg(test_hash_table.array->total == 0, "%d\n", test_hash_table.array->total);
+  ck_assert_msg(test_hash_table.array->size == 2, "%d\n", test_hash_table.array->size);
 }
 END_TEST
 
@@ -58,6 +78,10 @@ Suite *hash_table_suite(void)
   tcase_add_test(tc_hash_table_insert_and_lookup, ut_hash_table_insert_and_lookup);
   tcase_add_checked_fixture(tc_hash_table_insert_and_lookup, setup, teardown);
   suite_add_tcase(s, tc_hash_table_insert_and_lookup);
+  TCase *tc_hash_table_insert_and_delete = tcase_create("ut_hash_table_insert_and_delete");
+  tcase_add_test(tc_hash_table_insert_and_delete, ut_hash_table_insert_and_delete);
+  tcase_add_checked_fixture(tc_hash_table_insert_and_delete, setup, teardown);
+  suite_add_tcase(s, tc_hash_table_insert_and_delete);
   return s;
 }
 

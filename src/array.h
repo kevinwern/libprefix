@@ -51,8 +51,11 @@ void clear_dyn_array(DynArray *a);
 //Convert DynArray to string
 char *dyn_array_to_str(DynArray *a);
 
+//Remove node from dyn array
+void remove_dyn_array_node_hashed(DynArray *a, char c);
+
 //Resize array to different size
-int resize_array(DynArray *a, int size);
+static int resize_array(DynArray *a, int size);
 
 //Insert node into hash table
 static void find_hash_key_and_do_insert(DynArray *a, Node *n);
@@ -66,7 +69,5 @@ static int lookup_dyn_array_index_hashed(DynArray *a, char c);
 //Delete from hash table key
 static void find_hash_key_and_do_delete(DynArray *a, char c);
 
-//Remove node from dyn array
-void remove_dyn_array_node_hashed(DynArray *a, char c);
 
 #endif
