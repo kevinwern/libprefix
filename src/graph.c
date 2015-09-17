@@ -19,13 +19,13 @@ static int is_leaf (Node *n){
 
 // Look up a given word in the set
 // Params: a node, a word
-int find_word (Node *graph, char *word){
+int find_word (Node *graph, wchar_t *word){
   Node *searchPointer = graph;
-  while (*word != '\0' && searchPointer != NULL){
+  while (*word != L'\0' && searchPointer != NULL){
       searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
       word++;
   }
-  if (*word != '\0' || searchPointer == NULL)
+  if (*word != L'\0' || searchPointer == NULL)
     return 0;
   else
     return searchPointer->isword;
@@ -33,10 +33,10 @@ int find_word (Node *graph, char *word){
 
 // Insert a new word into the set
 // Params: a node, a word
-int insert_word (Node *graph, char *word)
+int insert_word (Node *graph, wchar_t *word)
 {
   Node *searchPointer = graph;
-  while (*word != '\0'){
+  while (*word != L'\0'){
     insert_node((HashTable *)(searchPointer->next), *word);
     searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
     word++;
@@ -46,8 +46,8 @@ int insert_word (Node *graph, char *word)
 }
 
  // Remove a word in the set
-int delete_word (Node *graph, char *word){
-  char *wordcopy = word, *startingchar = "\0";
+int delete_word (Node *graph, wchar_t *word){
+  wchar_t *wordcopy = word, *startingchar = '\0';
   Node *lastword, *searchPointer = graph;
   while (*wordcopy != '\0' && searchPointer != NULL){
     if (searchPointer->isword && ((HashTable *)(searchPointer->next))->array->total == 1){
@@ -78,7 +78,7 @@ int delete_word (Node *graph, char *word){
   Node *pivot =NULL;
   Node *previous=NULL;
   initDynArray(&word,0);
-  char i = 'a';
+  wchar_t i = 'a';
 
   while(1) {
     if (i > 'z'){

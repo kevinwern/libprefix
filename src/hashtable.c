@@ -14,7 +14,7 @@ void clear_hash_table(HashTable *h)
   free(h->array);
 }
 
-Node *lookup_node(HashTable *h, char c)
+Node *lookup_node(HashTable *h, wchar_t c)
 {
   int index = find_hash_index(h,c);
   if (index < 0) {
@@ -25,7 +25,7 @@ Node *lookup_node(HashTable *h, char c)
   }
 }
 
-int insert_node(HashTable *h, char c)
+int insert_node(HashTable *h, wchar_t c)
 {
   if (lookup_node(h, c) != NULL) {
     return -1;
@@ -44,7 +44,7 @@ int insert_node(HashTable *h, char c)
   return 0;
 }
 
-int delete_node(HashTable *h, char c)
+int delete_node(HashTable *h, wchar_t c)
 {
   if (lookup_node(h, c) == NULL) {
     return -1;
@@ -82,7 +82,7 @@ static void rekey_hash_table(HashTable *h, DynArray *a)
   }
 }
 
-static int find_hash_index(HashTable *h, char c)
+static int find_hash_index(HashTable *h, wchar_t c)
 {
   int initial_index = find_initial_hash_index(h, c);
   int i;
@@ -98,7 +98,7 @@ static int find_hash_index(HashTable *h, char c)
   return -1;
 }
 
-static int find_initial_hash_index(HashTable *h, char c)
+static int find_initial_hash_index(HashTable *h, wchar_t c)
 {
   return c % h->array->size;
 }

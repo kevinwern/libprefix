@@ -30,7 +30,7 @@ int init_dyn_array1(DynArray *a)
 }
 
 // Add character after last assigned member.
-int append_dyn_array_char(DynArray *a, char c)
+int append_dyn_array_char(DynArray *a, wchar_t c)
 {
   if (a->type != CONTINUOUS)
   {
@@ -48,11 +48,11 @@ int append_dyn_array_char(DynArray *a, char c)
       a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
       for (i=size; i<a->size; i++)
       {
-        a->array[i] = (char *) malloc(sizeof(char));
+        a->array[i] = (wchar_t *) malloc(sizeof(wchar_t));
       }
     }
-    if (a->array[a->total] == NULL) a->array[a->total] = (char *) malloc(sizeof(char));
-    *(char *)((char **)a->array)[a->total] = c;
+    if (a->array[a->total] == NULL) a->array[a->total] = (wchar_t *) malloc(sizeof(wchar_t));
+    *(wchar_t *)((wchar_t **)a->array)[a->total] = c;
     a->total=a->total+1;
     return 0;
   }
@@ -91,7 +91,7 @@ int insert_dyn_array_node(DynArray *a, Node *n, int index)
 }
 
 // Lookup character at any point in DynArray
-char lookup_dyn_array_char(DynArray *a, int index)
+wchar_t lookup_dyn_array_char(DynArray *a, int index)
 {
   if (a->array != NULL) {
     if (a->size <= index || index < 0) {
@@ -99,7 +99,7 @@ char lookup_dyn_array_char(DynArray *a, int index)
       return -1;
     }
     else {
-      return *(char*) a->array[index];
+      return *(wchar_t*) a->array[index];
     }
   }
   else {
@@ -170,7 +170,7 @@ void remove_dyn_array(DynArray *a, int remove){
 }
 
 //returns last character in array
-char pop_dyn_array(DynArray *a){
+wchar_t pop_dyn_array(DynArray *a){
   if (a->total == 0) {
     libprefix_set_error(INSUFFICIENT_TOTAL);
     return -1;
@@ -179,7 +179,7 @@ char pop_dyn_array(DynArray *a){
   if (a->array != NULL) {
     int size = a->size;
     a->total = a->total-1;
-    char toReturn = *(char *) a->array[a->total];
+    wchar_t toReturn = *(wchar_t *) a->array[a->total];
     while (size / 2 >= a->total  && size > MIN_SIZE){
       size /= 2;
     }
@@ -193,16 +193,16 @@ char pop_dyn_array(DynArray *a){
 }
 
 // Convert DynArray to a string
-char *dyn_array_to_str(DynArray *a){
+wchar_t *dyn_array_to_str(DynArray *a){
   if (a->type != CONTINUOUS)
   {
     libprefix_set_error(INCORRECT_ARR_TYPE);
     return NULL;
   }
-  char* return_string = malloc(sizeof(char) * (a->total+1));
+  wchar_t* return_string = malloc(sizeof(wchar_t) * (a->total+1));
   int i;
   for (i = 0; i < a->total; i++){
-    return_string[i] = *(char *) a->array[i];
+    return_string[i] = *(wchar_t *) a->array[i];
   }
   return_string[i] = '\0';
   return return_string;
