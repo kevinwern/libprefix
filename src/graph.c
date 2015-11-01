@@ -53,7 +53,7 @@ int delete_word (Node *graph, wchar_t *word)
   while (*word != L'\0' && searchPointer != NULL){
     if (searchPointer->isword && ((HashTable *)(searchPointer->next))->array->total == 1){
       lastwordnode = searchPointer;
-      lastwordchar = word+1;
+      lastwordchar = word;
     }
     searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
     word++;
