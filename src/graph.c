@@ -46,27 +46,27 @@ int insert_word (Node *graph, wchar_t *word)
 }
 
  // Remove a word in the set
-int delete_word (Node *graph, wchar_t *word){
-  wchar_t *wordcopy = word, *startingchar = '\0';
-  Node *lastword, *searchPointer = graph;
-  while (*wordcopy != '\0' && searchPointer != NULL){
+int delete_word (Node *graph, wchar_t *word)
+{
+  wchar_t *lastwordchar;
+  Node *lastwordnode, *searchPointer = graph;
+  while (*word != L'\0' && searchPointer != NULL){
     if (searchPointer->isword && ((HashTable *)(searchPointer->next))->array->total == 1){
-      lastword = searchPointer;
-      startingchar = wordcopy;
+      lastwordnode = searchPointer;
+      lastwordchar = word+1;
     }
-    searchPointer = lookup_node((HashTable *)(searchPointer->next), *wordcopy);
-    wordcopy++;
+    searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
+    word++;
   }
   if (searchPointer == NULL)
     return 1;
   searchPointer->isword = 0;
   if (is_leaf(searchPointer)){
-    Node *previous;
-    while (*startingchar != '\0'){
-      previous = lastword;
-      lastword = lookup_node((HashTable *)(lastword->next), *startingchar);
-      delete_node((HashTable *)(previous->next), *startingchar);
-      startingchar++;
+    Node *next;
+    while (next != NULL){
+      next = lookup_node((HashTable *)(lastwordnode->next), *lastwordchar);
+      delete_node((HashTable *)(lastwordnode->next), *lastwordchar);
+      lastwordchar++;
     }
   }
   return 0;
