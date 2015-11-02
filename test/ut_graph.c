@@ -75,9 +75,9 @@ Suite *graph_suite (void)
   TCase *tc_graph = tcase_create ("unit_test_graph");
   tcase_add_test (tc_graph, ut_graph);
   suite_add_tcase (s, tc_graph);
-  TCase *tc_graph_load_dictionary = tcase_create ("unit_test_graph_dict");
+/*  TCase *tc_graph_load_dictionary = tcase_create ("unit_test_graph_dict");
   tcase_add_test (tc_graph_load_dictionary, ut_graph_load_dictionary);
-  suite_add_tcase (s, tc_graph_load_dictionary);
+  suite_add_tcase (s, tc_graph_load_dictionary); */
 
   return s;
 }
