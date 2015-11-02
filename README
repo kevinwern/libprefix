@@ -11,3 +11,5 @@ make check
 
 Dependencies:
 check ( http://check.sourceforge.net )
+automake
+libtool
