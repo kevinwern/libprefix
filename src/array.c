@@ -3,8 +3,22 @@
 #include <string.h>
 #include "array.h"
 
+DynArray *alloc_dyn_array()
+{
+  DynArray *new_array = (DynArray *) malloc(sizeof(DynArray));
+  new_array->size = 0;
+  new_array->total = 0;
+  new_array->type = UNINITIALIZED;
+  new_array->array = NULL;
+  return new_array;
+}
+
 // Initialize array, optionally based on size and type.
 int init_dyn_array3(DynArray *a, ArrayType type, int size){
+  if (a->type != UNINITIALIZED)
+  {
+    clear_dyn_array(a);
+  }
   int i;
   a->size = MIN_SIZE;
   a->type = type;
@@ -76,7 +90,7 @@ int insert_dyn_array_node(DynArray *a, Node *n, int index)
       return -1; 
     }
     if (a->array[index] != NULL) {
-      free(a->array[index]);
+      clear_node(a->array[index]);
     }
     else {
       a->total += 1;
@@ -193,29 +207,48 @@ wchar_t pop_dyn_array(DynArray *a){
 }
 
 // Convert DynArray to a string
-wchar_t *dyn_array_to_str(DynArray *a){
-  if (a->type != CONTINUOUS)
-  {
+wchar_t *dyn_array_to_str(DynArray *a)
+{
+  if (a->type != CONTINUOUS) {
     libprefix_set_error(INCORRECT_ARR_TYPE);
     return NULL;
   }
-  wchar_t* return_string = malloc(sizeof(wchar_t) * (a->total+1));
+  wchar_t *return_string = malloc(sizeof(wchar_t) * (a->total+1));
   int i;
   for (i = 0; i < a->total; i++){
-    return_string[i] = *(wchar_t *) a->array[i];
+    return_string[i] = *((wchar_t **) a->array)[i];
   }
   return_string[i] = '\0';
   return return_string;
 }
 
 // Free dynamic array structure
-void clear_dyn_array(DynArray *a){
-  if (a->size != 0){
-    free(a->array);
-    a->total = 0;
-    a->size = 0;
-    a->array = NULL;
+void clear_dyn_array(DynArray *a)
+{
+  int i;
+  if (a->type == CONTINUOUS) {
+    for (i = 0; i < a->size; i++) {
+      free(a->array[i]);
+    }
   }
+  else {
+    for (i = 0; i < a->size; i++) {
+      if (a->array[i] != NULL) {
+        clear_node(a->array[i]);
+        dealloc_node(a->array[i]);
+      }
+    }
+  }
+  free(a->array);
+  a->size = 0;
+  a->total = 0;
+  a->type = UNINITIALIZED;
+  a->array = NULL;
+}
+
+void dealloc_dyn_array(DynArray *a)
+{
+  free(a);
 }
 
 static int resize_array(DynArray *a, int size)

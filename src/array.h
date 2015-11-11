@@ -11,6 +11,7 @@
 #define init_dyn_array(...) EVALUATE(init_dyn_array, ARGN(__VA_ARGS__))(__VA_ARGS__)
 
 typedef enum ArrayType {
+  UNINITIALIZED,
   CONTINUOUS,
   NON_CONTINUOUS
 } ArrayType;
@@ -21,6 +22,9 @@ typedef struct DynArray {
   int  size;
   int  total;
 } DynArray;
+
+DynArray *alloc_dyn_array();
+void dealloc_dyn_array(DynArray *a);
 
 // Initialize array based on size
 // Default arguments: size = DEFAULT_SIZE, type = CONTINUOUS

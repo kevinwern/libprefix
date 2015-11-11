@@ -6,11 +6,32 @@
 #include "array.h"
 #include "hashtable.h"
 
-void init_graph (Node *n){
+Node *alloc_node()
+{
+  Node *node = malloc(sizeof(Node));
+  node->next = NULL;
+  node->isword = 0;
+  return node;
+}
+
+void dealloc_node(Node *n)
+{
+  free(n);
+}
+
+void init_node (Node *n){
   int i;
-  HashTable *hashtable = malloc(sizeof(HashTable));
+  HashTable *hashtable = alloc_hash_table();
   init_hash_table(hashtable, DEFAULT_SIZE);
   n->next = hashtable;
+}
+
+void clear_node (Node *n){
+  if (n->next != NULL)
+  {
+    clear_hash_table(n->next);
+  }
+  free(n->next);
 }
 
 static int is_leaf (Node *n){
@@ -23,7 +44,7 @@ int find_word (Node *graph, wchar_t *word){
   Node *searchPointer = graph;
   while (*word != L'\0' && searchPointer != NULL){
       searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
-      word++;
+     word++;
   }
   if (*word != L'\0' || searchPointer == NULL)
     return 0;
@@ -48,12 +69,13 @@ int insert_word (Node *graph, wchar_t *word)
  // Remove a word in the set
 int delete_word (Node *graph, wchar_t *word)
 {
-  wchar_t *lastwordchar;
-  Node *lastwordnode, *searchPointer = graph;
+  Node *lastwordnode = NULL, *searchPointer = graph;
   while (*word != L'\0' && searchPointer != NULL){
     if (searchPointer->isword && ((HashTable *)(searchPointer->next))->array->total == 1){
       lastwordnode = searchPointer;
-      lastwordchar = word;
+    }
+    else if (((HashTable *)(searchPointer->next))->array->total > 1) {
+      lastwordnode = NULL;
     }
     searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
     word++;
@@ -61,23 +83,20 @@ int delete_word (Node *graph, wchar_t *word)
   if (searchPointer == NULL)
     return 1;
   searchPointer->isword = 0;
-  if (is_leaf(searchPointer)){
-    Node *next;
-    while (next != NULL){
-      next = lookup_node((HashTable *)(lastwordnode->next), *lastwordchar);
-      delete_node((HashTable *)(lastwordnode->next), *lastwordchar);
-      lastwordchar++;
-    }
+  if (lastwordnode != NULL){
+    clear_node(lastwordnode);
+    dealloc_node(lastwordnode);
   }
   return 0;
 }
 
-/*void print_graph (Node * graph){
+/**
+void print_graph (Node * graph){
   DynArray word;
   Node *path = graph;
   Node *pivot =NULL;
   Node *previous=NULL;
-  initDynArray(&word,0);
+  init_dyn_array(&word,0);
   wchar_t i = 'a';
 
   while(1) {

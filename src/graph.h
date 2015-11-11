@@ -8,11 +8,16 @@
 
 typedef struct Node {
   wchar_t key;
-  int  isword;
+  int isword;
   void *next;
 } Node;
 
-void init_graph(Node *n);
+
+Node *alloc_node();
+void dealloc_node(Node *n);
+
+void init_node(Node *n);
+void clear_node(Node *n);
 
 // Look up a given word in the set
 // Params: a node, a word

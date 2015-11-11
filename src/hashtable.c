@@ -4,14 +4,28 @@
 
 void init_hash_table(HashTable *h, int size)
 {
-  h->array = malloc(sizeof(DynArray));
+  h->array = alloc_dyn_array();
   init_dyn_array(h->array, NON_CONTINUOUS, size);
 }
 
 void clear_hash_table(HashTable *h)
 {
-  clear_dyn_array(h->array);
-  free(h->array);
+  if (h->array != NULL) {
+    clear_dyn_array(h->array);
+  }
+  dealloc_dyn_array(h->array);
+}
+
+HashTable *alloc_hash_table()
+{
+  HashTable *hash_table = malloc(sizeof(HashTable));
+  hash_table->array = NULL;
+  return hash_table;
+}
+
+void dealloc_hash_table(HashTable *h)
+{
+  free(h);
 }
 
 Node *lookup_node(HashTable *h, wchar_t c)
@@ -30,14 +44,12 @@ int insert_node(HashTable *h, wchar_t c)
   if (lookup_node(h, c) != NULL) {
     return -1;
   }
-  if (h->array->total == h->array->size)
-  {
+  if (h->array->total == h->array->size) {
     resize_and_rekey_hash_table(h, h->array->size * 2);
   }
-  Node *node = (Node *) malloc(sizeof(Node));
+  Node *node = alloc_node();
+  init_node(node);
   node->key = c;
-  node->next = (HashTable *) malloc(sizeof(HashTable));
-  init_hash_table((HashTable *) node->next, DEFAULT_SIZE);
   node->isword = 0;
   int index = find_hash_index(h, c);
   insert_dyn_array_node(h->array, node, index);
@@ -49,8 +61,7 @@ int delete_node(HashTable *h, wchar_t c)
   if (lookup_node(h, c) == NULL) {
     return -1;
   }
-  if (h->array->total == h->array->size/2 && h->array->size != 2)
-  {
+  if (h->array->total == h->array->size/2 && h->array->size != 2) {
     resize_and_rekey_hash_table(h, h->array->size / 2);
   }
   int index = find_hash_index(h, c);
@@ -61,12 +72,13 @@ int delete_node(HashTable *h, wchar_t c)
 static void resize_and_rekey_hash_table(HashTable *h, int size)
 {
   DynArray *old_array = h->array;
-  DynArray *new_array = malloc(sizeof(DynArray));
+  DynArray *new_array = alloc_dyn_array();
+  init_dyn_array(new_array, NON_CONTINUOUS, size);
   h->array = new_array;
   h->array->size = size;
-  init_dyn_array(new_array, NON_CONTINUOUS, size);
   rekey_hash_table(h, old_array);
-  free(old_array);
+  clear_dyn_array(old_array);
+  dealloc_dyn_array(old_array);
 }
 
 static void rekey_hash_table(HashTable *h, DynArray *a)
