@@ -30,6 +30,8 @@ void clear_node (Node *n){
   if (n->next != NULL)
   {
     clear_hash_table(n->next);
+    dealloc_hash_table(n->next);
+    n->next = NULL;
   }
   free(n->next);
 }

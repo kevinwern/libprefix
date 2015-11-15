@@ -248,6 +248,10 @@ void clear_dyn_array(DynArray *a)
 
 void dealloc_dyn_array(DynArray *a)
 {
+  if (a->array != NULL)
+  {
+    free(a->array);
+  }
   free(a);
 }
 

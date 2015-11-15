@@ -77,8 +77,17 @@ static void resize_and_rekey_hash_table(HashTable *h, int size)
   h->array = new_array;
   h->array->size = size;
   rekey_hash_table(h, old_array);
-  clear_dyn_array(old_array);
   dealloc_dyn_array(old_array);
+}
+
+static int reinsert_node(HashTable *h, Node *n)
+{
+  if (lookup_node(h, n->key) != NULL) {
+    return -1;
+  }
+  int index = find_hash_index(h, n->key);
+  insert_dyn_array_node(h->array, n, index);
+  return 0;
 }
 
 static void rekey_hash_table(HashTable *h, DynArray *a)
@@ -89,7 +98,7 @@ static void rekey_hash_table(HashTable *h, DynArray *a)
   {
     current = lookup_dyn_array_node(a, i);
     if (current != NULL) {
-      insert_node(h, current->key);
+      reinsert_node(h, current);
     }
   }
 }

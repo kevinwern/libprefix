@@ -54,14 +54,14 @@ END_TEST
 START_TEST (ut_hash_table_insert_and_delete)
 {
   init_hash_table(test_hash_table, DEFAULT_SIZE);
-  char c;
+  wchar_t c;
   int i;
   Node *result;
-  for (c = 'a'; c <= 'z'; c++)
+  for (c = L'a'; c <= L'z'; c++)
   {
     insert_node(test_hash_table, c);
   }
-  for (c = 'a'; c <= 'z'; c++)
+  for (c = L'a'; c <= L'z'; c++)
   {
     delete_node(test_hash_table, c);
   }
@@ -83,10 +83,10 @@ Suite *hash_table_suite(void)
   tcase_add_test(tc_hash_table_insert_and_lookup, ut_hash_table_insert_and_lookup);
   tcase_add_checked_fixture(tc_hash_table_insert_and_lookup, setup, teardown);
   suite_add_tcase(s, tc_hash_table_insert_and_lookup);
-/*  TCase *tc_hash_table_insert_and_delete = tcase_create("ut_hash_table_insert_and_delete");
+  TCase *tc_hash_table_insert_and_delete = tcase_create("ut_hash_table_insert_and_delete");
   tcase_add_test(tc_hash_table_insert_and_delete, ut_hash_table_insert_and_delete);
   tcase_add_checked_fixture(tc_hash_table_insert_and_delete, setup, teardown);
-  suite_add_tcase(s, tc_hash_table_insert_and_delete);*/
+  suite_add_tcase(s, tc_hash_table_insert_and_delete);
   return s;
 }
 

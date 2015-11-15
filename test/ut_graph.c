@@ -53,6 +53,8 @@ START_TEST (ut_graph){
   ck_assert_msg(find_word(graph, L"nono") == 0, "String 'none', now deleted from the set', should not be present (but was found)");
   ck_assert_msg(find_word(graph, L"yield") == 1, "String 'yeah' should still be found in the set, even with other deleted elements");
   ck_assert_msg(find_word(graph, L"year") == 1, "Inserted string 'year', branching off 'yeah', should now be present in the set (but not found)");
+
+  clear_node(graph);
 }
 END_TEST
 
@@ -63,31 +65,37 @@ START_TEST (ut_graph_load_dictionary)
   FILE *fp = fopen("/usr/share/dict/words", "r");
   wchar_t word[1000];
   
-  while (fgetws(word, 80, fp) != NULL) 
+  while (fgetws(word, 80, fp)) 
   {
-    word[wcslen(word)-1] = '\0';
+    word[wcslen(word)-1] = L'\0';
     insert_word(graph, word);
-    ck_assert_msg(find_word(graph, word) == 1);
   }
-
-  ck_assert_msg(find_word(graph, L"why") == 1);
+  rewind(fp);
+ 
+  while (fgetws(word, 80, fp)) 
+  {
+    word[wcslen(word)-1] = L'\0';
+     ck_assert_msg(find_word(graph, word) == 1, "Fuckin word %ls\n", word);
+  }
   fclose(fp);
 
+  clear_node(graph);
 }
 END_TEST
 
 Suite *graph_suite (void)
 {
-  Suite *s = suite_create ("Graph");
+  Suite *s = suite_create("Graph");
 
   /* Core test case */
-  TCase *tc_graph = tcase_create ("unit_test_graph");
-  tcase_add_test (tc_graph, ut_graph);
+  TCase *tc_graph = tcase_create("unit_test_graph");
+  tcase_add_test(tc_graph, ut_graph);
   tcase_add_checked_fixture(tc_graph, setup, teardown);
-  suite_add_tcase (s, tc_graph);
-/*  TCase *tc_graph_load_dictionary = tcase_create ("unit_test_graph_dict");
-  tcase_add_test (tc_graph_load_dictionary, ut_graph_load_dictionary);
-  suite_add_tcase (s, tc_graph_load_dictionary);*/
+  suite_add_tcase(s, tc_graph);
+  TCase *tc_graph_load_dictionary = tcase_create ("unit_test_graph_dict");
+  tcase_add_test(tc_graph_load_dictionary, ut_graph_load_dictionary);
+  tcase_add_checked_fixture(tc_graph_load_dictionary, setup, teardown);
+  suite_add_tcase (s, tc_graph_load_dictionary);
 
   return s;
 }
