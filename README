@@ -1,4 +1,4 @@
-libprefix - a simple, effective library for prefix-suffix based sets, to eventually be expanded to other structures
+libprefix - a simple, effective library for implementing trie-based sets
 
 To install:
 ./autoconf.sh
