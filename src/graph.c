@@ -1,32 +1,32 @@
 // Graph.c
-// Set implemented string comparison
+// Core functionality for inserting, looking up, and deleting words.
 #include <stdlib.h>
 #include <stdio.h>
 #include "graph.h"
 #include "array.h"
 #include "hashtable.h"
 
-Node *alloc_node()
+node *alloc_node()
 {
-  Node *node = malloc(sizeof(Node));
+  node *node = malloc(sizeof(node));
   node->next = NULL;
   node->isword = 0;
   return node;
 }
 
-void dealloc_node(Node *n)
+void dealloc_node(node *n)
 {
   free(n);
 }
 
-void init_node (Node *n){
+void init_node (node *n){
   int i;
-  HashTable *hashtable = alloc_hash_table();
+  hash_table *hashtable = alloc_hash_table();
   init_hash_table(hashtable, DEFAULT_SIZE);
   n->next = hashtable;
 }
 
-void clear_node (Node *n){
+void clear_node (node *n){
   if (n->next != NULL)
   {
     clear_hash_table(n->next);
@@ -36,16 +36,16 @@ void clear_node (Node *n){
   free(n->next);
 }
 
-static int is_leaf (Node *n){
-   return ((HashTable *)n->next)->array->total == 0;
+static int is_leaf (node *n){
+   return ((hash_table *)n->next)->array->total == 0;
 }
 
 // Look up a given word in the set
 // Params: a node, a word
-int find_word (Node *graph, wchar_t *word){
-  Node *searchPointer = graph;
+int find_word (node *graph, wchar_t *word){
+  node *searchPointer = graph;
   while (*word != L'\0' && searchPointer != NULL){
-      searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
+      searchPointer = lookup_node((hash_table *)(searchPointer->next), *word);
      word++;
   }
   if (*word != L'\0' || searchPointer == NULL)
@@ -56,30 +56,30 @@ int find_word (Node *graph, wchar_t *word){
 
 // Insert a new word into the set
 // Params: a node, a word
-int insert_word (Node *graph, wchar_t *word)
+int insert_word (node *graph, wchar_t *word)
 {
-  Node *searchPointer = graph;
+  node *searchPointer = graph;
   while (*word != L'\0'){
-    insert_node((HashTable *)(searchPointer->next), *word);
-    searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
+    insert_node((hash_table *)(searchPointer->next), *word);
+    searchPointer = lookup_node((hash_table *)(searchPointer->next), *word);
     word++;
   }
   searchPointer->isword = 1;
   return 0;
 }
 
- // Remove a word in the set
-int delete_word (Node *graph, wchar_t *word)
+// Remove a word in the set
+int delete_word (node *graph, wchar_t *word)
 {
-  Node *lastwordnode = NULL, *searchPointer = graph;
+  node *lastwordnode = NULL, *searchPointer = graph;
   while (*word != L'\0' && searchPointer != NULL){
-    if (searchPointer->isword && ((HashTable *)(searchPointer->next))->array->total == 1){
+    if (searchPointer->isword && ((hash_table *)(searchPointer->next))->array->total == 1){
       lastwordnode = searchPointer;
     }
-    else if (((HashTable *)(searchPointer->next))->array->total > 1) {
+    else if (((hash_table *)(searchPointer->next))->array->total > 1) {
       lastwordnode = NULL;
     }
-    searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
+    searchPointer = lookup_node((hash_table *)(searchPointer->next), *word);
     word++;
   }
   if (searchPointer == NULL)
@@ -93,11 +93,11 @@ int delete_word (Node *graph, wchar_t *word)
 }
 
 /**
-void print_graph (Node * graph){
-  DynArray word;
-  Node *path = graph;
-  Node *pivot =NULL;
-  Node *previous=NULL;
+void print_graph (node * graph){
+  dyn_array word;
+  node *path = graph;
+  node *pivot =NULL;
+  node *previous=NULL;
   init_dyn_array(&word,0);
   wchar_t i = 'a';
 
@@ -105,7 +105,7 @@ void print_graph (Node * graph){
     if (i > 'z'){
        if (word.total == 0) break;
        else {
-	 i = popDynArray(&word);
+	 i = popdyn_array(&word);
 	 pivot->next[character_hash(i)] = path;
 	 path = pivot;
 	 pivot = previous;
@@ -117,14 +117,14 @@ void print_graph (Node * graph){
     }
 
     if (path->next[character_hash(i)] != NULL){
-      insertDynArray(&word,i);
+      insertdyn_array(&word,i);
       previous = pivot;
       pivot = path;
       path = path->next[character_hash(i)];
       pivot->next[character_hash(i)] = previous;
       i = 'a';
       if (path->isword)
-        printDynArray(&word);
+        printdyn_array(&word);
     }
     else{
       i++;

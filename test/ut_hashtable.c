@@ -1,5 +1,5 @@
 // ut_hashtable.c
-// unit test for HashTable wrapper for DynArray
+// unit test for hash_table wrapper for dyn_array
 
 #include <check.h>
 #include <stdio.h>
@@ -9,7 +9,7 @@
 #include "../src/hashtable.h"
 #include "../src/graph.h"
 
-HashTable *test_hash_table;
+hash_table *test_hash_table;
 
 void setup (void)
 {
@@ -33,7 +33,7 @@ START_TEST (ut_hash_table_insert_and_lookup)
   init_hash_table(test_hash_table, DEFAULT_SIZE);
   wchar_t c;
   int i;
-  Node *result;
+  node *result;
   for (c = L'a'; c <= L'z'; c++)
   {
     insert_node(test_hash_table, c);
@@ -56,7 +56,7 @@ START_TEST (ut_hash_table_insert_and_delete)
   init_hash_table(test_hash_table, DEFAULT_SIZE);
   wchar_t c;
   int i;
-  Node *result;
+  node *result;
   for (c = L'a'; c <= L'z'; c++)
   {
     insert_node(test_hash_table, c);
@@ -73,7 +73,7 @@ END_TEST
 
 Suite *hash_table_suite(void)
 {
-  Suite *s = suite_create("HashTable");
+  Suite *s = suite_create("hash_table");
 
   TCase *tc_hash_table = tcase_create("ut_hash_table_init");
   tcase_add_checked_fixture(tc_hash_table, setup, teardown);

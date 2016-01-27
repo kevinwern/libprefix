@@ -1,5 +1,5 @@
 // ut_array.c
-// unit test for DynArray (dynamic array) Helper Library
+// unit test for dyn_array (dynamic array) Helper Library
 
 #include <check.h>
 #include <stdio.h>
@@ -9,7 +9,7 @@
 #include "../src/array.h"
 #include "../src/graph.h"
 
-DynArray* test_array;
+dyn_array* test_array;
 
 void setup (void)
 {
@@ -76,12 +76,12 @@ START_TEST (ut_array_insert_node)
 {
   init_dyn_array(test_array, NON_CONTINUOUS);
   int index_to_add = 1;
-  Node *test_node, *node;
+  node *test_node, *node;
   node = alloc_node();
   insert_dyn_array_node(test_array, node, index_to_add);
   test_node = lookup_dyn_array_node(test_array, index_to_add);
   ck_assert_msg(test_node == node,
-    "Node inserted was not found");
+    "node inserted was not found");
   clear_dyn_array(test_array);
 }
 END_TEST
@@ -110,7 +110,7 @@ END_TEST
 
 Suite *array_suite(void)
 {
-  Suite *s = suite_create("DynArray");
+  Suite *s = suite_create("dyn_array");
 
   TCase *tc_dyn_array = tcase_create("ut_array_init");
   tcase_add_test(tc_dyn_array, ut_array_init);

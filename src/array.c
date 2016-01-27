@@ -3,9 +3,9 @@
 #include <string.h>
 #include "array.h"
 
-DynArray *alloc_dyn_array()
+dyn_array *alloc_dyn_array()
 {
-  DynArray *new_array = (DynArray *) malloc(sizeof(DynArray));
+  dyn_array *new_array = (dyn_array *) malloc(sizeof(dyn_array));
   new_array->size = 0;
   new_array->total = 0;
   new_array->type = UNINITIALIZED;
@@ -14,7 +14,7 @@ DynArray *alloc_dyn_array()
 }
 
 // Initialize array, optionally based on size and type.
-int init_dyn_array3(DynArray *a, ArrayType type, int size){
+int init_dyn_array3(dyn_array *a, array_type type, int size){
   if (a->type != UNINITIALIZED)
   {
     clear_dyn_array(a);
@@ -33,18 +33,18 @@ int init_dyn_array3(DynArray *a, ArrayType type, int size){
   return 0;
 }
 
-int init_dyn_array2(DynArray *a, ArrayType type)
+int init_dyn_array2(dyn_array *a, array_type type)
 {
   return init_dyn_array3(a, type, DEFAULT_SIZE);
 }
 
-int init_dyn_array1(DynArray *a)
+int init_dyn_array1(dyn_array *a)
 {
   return init_dyn_array3(a, CONTINUOUS, DEFAULT_SIZE);
 }
 
 // Add character after last assigned member.
-int append_dyn_array_char(DynArray *a, wchar_t c)
+int append_dyn_array_char(dyn_array *a, wchar_t c)
 {
   if (a->type != CONTINUOUS)
   {
@@ -77,8 +77,8 @@ int append_dyn_array_char(DynArray *a, wchar_t c)
   }
 }
 
-// Insert node at any point in DynArray
-int insert_dyn_array_node(DynArray *a, Node *n, int index)
+// Insert node at any point in dyn_array
+int insert_dyn_array_node(dyn_array *a, node *n, int index)
 {
   if (a->type != NON_CONTINUOUS) {
     libprefix_set_error(INCORRECT_ARR_TYPE);
@@ -104,8 +104,8 @@ int insert_dyn_array_node(DynArray *a, Node *n, int index)
   }
 }
 
-// Lookup character at any point in DynArray
-wchar_t lookup_dyn_array_char(DynArray *a, int index)
+// Lookup character at any point in dyn_array
+wchar_t lookup_dyn_array_char(dyn_array *a, int index)
 {
   if (a->array != NULL) {
     if (a->size <= index || index < 0) {
@@ -122,8 +122,8 @@ wchar_t lookup_dyn_array_char(DynArray *a, int index)
   }
 }
 
-// Lookup Node at any point in DynArray
-Node *lookup_dyn_array_node(DynArray *a, int index)
+// Lookup node at any point in dyn_array
+node *lookup_dyn_array_node(dyn_array *a, int index)
 {
   if (a->array != NULL) {
     if (a->size <= index || index < 0) {
@@ -131,7 +131,7 @@ Node *lookup_dyn_array_node(DynArray *a, int index)
       return NULL;
     }
     else {
-      return (Node *)(((Node **)a->array)[index]);
+      return (node *)(((node **)a->array)[index]);
     }
   }
   else {
@@ -140,8 +140,8 @@ Node *lookup_dyn_array_node(DynArray *a, int index)
   }
 }
 
-// Delete Node from any point in DynArray
-int delete_dyn_array_node(DynArray *a, int index)
+// Delete node from any point in dyn_array
+int delete_dyn_array_node(dyn_array *a, int index)
 {
   if (a->array != NULL) {
     if (a->size <= index || index < 0) {
@@ -165,14 +165,14 @@ int delete_dyn_array_node(DynArray *a, int index)
   }
 }
 
-// Delete Node from any point in char
-int delete_dyn_array_char(DynArray *a, int index)
+// Delete node from any point in char
+int delete_dyn_array_char(dyn_array *a, int index)
 {
   return delete_dyn_array_node(a, index);
 }
 
 //Remove items based on size, items removed from end
-void remove_dyn_array(DynArray *a, int remove){
+void remove_dyn_array(dyn_array *a, int remove){
   int newsize = a->total-remove;
   if (a->array != NULL && newsize >= 0){
     while (a->size / 2 > newsize){
@@ -184,7 +184,7 @@ void remove_dyn_array(DynArray *a, int remove){
 }
 
 //returns last character in array
-wchar_t pop_dyn_array(DynArray *a){
+wchar_t pop_dyn_array(dyn_array *a){
   if (a->total == 0) {
     libprefix_set_error(INSUFFICIENT_TOTAL);
     return -1;
@@ -206,8 +206,8 @@ wchar_t pop_dyn_array(DynArray *a){
   }
 }
 
-// Convert DynArray to a string
-wchar_t *dyn_array_to_str(DynArray *a)
+// Convert dyn_array to a string
+wchar_t *dyn_array_to_str(dyn_array *a)
 {
   if (a->type != CONTINUOUS) {
     libprefix_set_error(INCORRECT_ARR_TYPE);
@@ -223,7 +223,7 @@ wchar_t *dyn_array_to_str(DynArray *a)
 }
 
 // Free dynamic array structure
-void clear_dyn_array(DynArray *a)
+void clear_dyn_array(dyn_array *a)
 {
   int i;
   if (a->type == CONTINUOUS) {
@@ -246,7 +246,7 @@ void clear_dyn_array(DynArray *a)
   a->array = NULL;
 }
 
-void dealloc_dyn_array(DynArray *a)
+void dealloc_dyn_array(dyn_array *a)
 {
   if (a->array != NULL)
   {
@@ -255,7 +255,7 @@ void dealloc_dyn_array(DynArray *a)
   free(a);
 }
 
-static int resize_array(DynArray *a, int size)
+static int resize_array(dyn_array *a, int size)
 {
   int i;
   if (size < 0) {
