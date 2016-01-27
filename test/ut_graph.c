@@ -17,7 +17,7 @@ void teardown(void)
 }
 
 START_TEST (ut_graph){
-  //Initalize graphraph
+  //Initalize graph
   init_node(graph);
   //Store and find single word
   insert_word(graph, L"yeah");
@@ -75,7 +75,7 @@ START_TEST (ut_graph_load_dictionary)
   while (fgetws(word, 80, fp)) 
   {
     word[wcslen(word)-1] = L'\0';
-     ck_assert_msg(find_word(graph, word) == 1, "Fuckin word %ls\n", word);
+     ck_assert_msg(find_word(graph, word) == 1, "Can't find word %ls in full dictionary test\n", word);
   }
   fclose(fp);
 
