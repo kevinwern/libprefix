@@ -1,6 +1,12 @@
 #ifndef ERROR_H
 #define ERROR_H
 
+#define LIBPREFIX_ASSERT(CONDITION, ERROR_TYPE)\
+    if (!(CONDITION)) {\
+        libprefix_set_error(ERROR_TYPE);\
+        return -1;\
+    }
+
 typedef enum LIBPREFIX_ERROR_STATE {
   NO_ERROR,		// Default state if no error occurs.
   KEY_NOT_FOUND,	// Key not found in hash table.
