@@ -47,6 +47,9 @@ wchar_t lookup_dyn_array_char(DynArray *a, int index);
 //Lookup node
 Node *lookup_dyn_array_node(DynArray *a, int index);
 
+//Delete node
+int delete_dyn_array_node(DynArray *a, int index);
+
 //Remove items based on size, items removed from end
 void remove_dyn_array(DynArray *a, int remove);
 

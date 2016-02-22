@@ -7,6 +7,10 @@ typedef struct HashTable {
   DynArray *array;
 } HashTable;
 
+HashTable *alloc_hash_table();
+
+void dealloc_hash_table();
+
 void init_hash_table(HashTable *h, int size);
 
 void clear_hash_table(HashTable *h);
