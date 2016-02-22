@@ -3,9 +3,9 @@
 #include <string.h>
 #include "array.h"
 
-dyn_array *alloc_dyn_array()
+DynArray *alloc_dyn_array()
 {
-  dyn_array *new_array = (dyn_array *) malloc(sizeof(dyn_array));
+  DynArray *new_array = (DynArray *) malloc(sizeof(DynArray));
   new_array->size = 0;
   new_array->total = 0;
   new_array->type = UNINITIALIZED;
@@ -14,7 +14,7 @@ dyn_array *alloc_dyn_array()
 }
 
 // Initialize array, optionally based on size and type.
-int init_dyn_array3(dyn_array *a, array_type type, int size)
+int init_dyn_array3(DynArray *a, ArrayType type, int size)
 {
   LIBPREFIX_ASSERT(size % 2 == 0 && size > 0, INVALID_SIZE);
   if (a->type != UNINITIALIZED)
@@ -35,18 +35,18 @@ int init_dyn_array3(dyn_array *a, array_type type, int size)
   return 0;
 }
 
-int init_dyn_array2(dyn_array *a, array_type type)
+int init_dyn_array2(DynArray *a, ArrayType type)
 {
   return init_dyn_array3(a, type, DEFAULT_SIZE);
 }
 
-int init_dyn_array1(dyn_array *a)
+int init_dyn_array1(DynArray *a)
 {
   return init_dyn_array3(a, CONTINUOUS, DEFAULT_SIZE);
 }
 
 // Add character after last assigned member.
-int append_dyn_array_char(dyn_array *a, wchar_t c)
+int append_dyn_array_char(DynArray *a, wchar_t c)
 {
   LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT);
   LIBPREFIX_ASSERT(a->type == CONTINUOUS, INCORRECT_ARR_TYPE);
@@ -71,8 +71,8 @@ int append_dyn_array_char(dyn_array *a, wchar_t c)
   return 0;
 }
 
-// Insert node at any point in dyn_array
-int insert_dyn_array_node(dyn_array *a, node *n, int index)
+// Insert node at any point in DynArray
+int insert_dyn_array_node(DynArray *a, Node *n, int index)
 {
   LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT);
   LIBPREFIX_ASSERT(a->type == NON_CONTINUOUS, INCORRECT_ARR_TYPE);
@@ -91,8 +91,8 @@ int insert_dyn_array_node(dyn_array *a, node *n, int index)
   return 0;
 }
 
-// Lookup character at any point in dyn_array
-wchar_t lookup_dyn_array_char(dyn_array *a, int index)
+// Lookup character at any point in DynArray
+wchar_t lookup_dyn_array_char(DynArray *a, int index)
 {
   LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT);
   LIBPREFIX_ASSERT(index < a->size || index >= 0, INVALID_INDEX);
@@ -100,18 +100,17 @@ wchar_t lookup_dyn_array_char(dyn_array *a, int index)
   return *(wchar_t*) a->array[index];
 }
 
-// Lookup node at any point in dyn_array
-node *lookup_dyn_array_node(dyn_array *a, int index)
+// Lookup Node at any point in DynArray
+Node *lookup_dyn_array_node(DynArray *a, int index)
 {
   LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT, NULL);
   LIBPREFIX_ASSERT(a->type == NON_CONTINUOUS, INCORRECT_ARR_TYPE, NULL);
   LIBPREFIX_ASSERT(index < a->size || index >= 0, INVALID_INDEX, NULL);
-
-  return (node *)(((node **)a->array)[index]);
+  return (Node *)(((Node **)a->array)[index]);
 }
 
-// Delete node from any point in dyn_array
-int delete_dyn_array_node(dyn_array *a, int index)
+// Delete Node from any point in DynArray
+int delete_dyn_array_node(DynArray *a, int index)
 {
   LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT);
   LIBPREFIX_ASSERT(a->type == NON_CONTINUOUS, INCORRECT_ARR_TYPE);
@@ -124,8 +123,8 @@ int delete_dyn_array_node(dyn_array *a, int index)
   return 0;
 }
 
-// Delete node from any point in char
-int delete_dyn_array_char(dyn_array *a, int index)
+// Delete Node from any point in char
+int delete_dyn_array_char(DynArray *a, int index)
 {
   LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT);
   LIBPREFIX_ASSERT(index < a->size || index >= 0, INVALID_INDEX);
@@ -135,7 +134,7 @@ int delete_dyn_array_char(dyn_array *a, int index)
 }
 
 //Remove items based on size, items removed from end
-void remove_dyn_array(dyn_array *a, int remove)
+void remove_dyn_array(DynArray *a, int remove)
 {
   int newsize = a->total-remove;
   if (a->array != NULL && newsize >= 0){
@@ -148,7 +147,7 @@ void remove_dyn_array(dyn_array *a, int remove)
 }
 
 //returns last character in array
-wchar_t pop_dyn_array(dyn_array *a)
+wchar_t pop_dyn_array(DynArray *a)
 {
   LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT);
   LIBPREFIX_ASSERT(a->total > 0, INSUFFICIENT_TOTAL);
@@ -163,8 +162,8 @@ wchar_t pop_dyn_array(dyn_array *a)
   return to_return;
 }
 
-// Convert dyn_array to a string
-wchar_t *dyn_array_to_str(dyn_array *a)
+// Convert DynArray to a string
+wchar_t *dyn_array_to_str(DynArray *a)
 {
   LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT, NULL);
   LIBPREFIX_ASSERT(a->type == CONTINUOUS, INCORRECT_ARR_TYPE, NULL);
@@ -179,7 +178,7 @@ wchar_t *dyn_array_to_str(dyn_array *a)
 }
 
 // Free dynamic array structure
-void clear_dyn_array(dyn_array *a)
+void clear_dyn_array(DynArray *a)
 {
   int i;
   if (a->type == CONTINUOUS) {
@@ -202,7 +201,7 @@ void clear_dyn_array(dyn_array *a)
   a->array = NULL;
 }
 
-void dealloc_dyn_array(dyn_array *a)
+void dealloc_dyn_array(DynArray *a)
 {
   if (a->array != NULL)
   {
@@ -211,7 +210,7 @@ void dealloc_dyn_array(dyn_array *a)
   free(a);
 }
 
-static int resize_array(dyn_array *a, int size)
+static int resize_array(DynArray *a, int size)
 {
   LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT);
   LIBPREFIX_ASSERT(size >= MIN_SIZE && size % 2 == 0, INVALID_SIZE);

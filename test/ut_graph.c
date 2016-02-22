@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "../src/graph.h"
 
-node *graph;
+Node *graph;
 
 void setup (void) 
 {
