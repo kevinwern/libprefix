@@ -1,14 +1,14 @@
-// hashtable.c -- Wraparound for dyn_array
+// hashtable.c -- Wraparound for DynArray
 // that acts as a hash table.
 #include "hashtable.h"
 
-void init_hash_table(hash_table *h, int size)
+void init_hash_table(HashTable *h, int size)
 {
   h->array = alloc_dyn_array();
   init_dyn_array(h->array, NON_CONTINUOUS, size);
 }
 
-void clear_hash_table(hash_table *h)
+void clear_hash_table(HashTable *h)
 {
   if (h->array != NULL) {
     clear_dyn_array(h->array);
@@ -16,19 +16,19 @@ void clear_hash_table(hash_table *h)
   dealloc_dyn_array(h->array);
 }
 
-hash_table *alloc_hash_table()
+HashTable *alloc_hash_table()
 {
-  hash_table *hash_table = malloc(sizeof(hash_table));
+  HashTable *hash_table = malloc(sizeof(HashTable));
   hash_table->array = NULL;
   return hash_table;
 }
 
-void dealloc_hash_table(hash_table *h)
+void dealloc_hash_table(HashTable *h)
 {
   free(h);
 }
 
-node *lookup_node(hash_table *h, wchar_t c)
+Node *lookup_node(HashTable *h, wchar_t c)
 {
   int index = find_hash_index(h,c);
   if (index < 0) {
@@ -39,7 +39,7 @@ node *lookup_node(hash_table *h, wchar_t c)
   }
 }
 
-int insert_node(hash_table *h, wchar_t c)
+int insert_node(HashTable *h, wchar_t c)
 {
   if (lookup_node(h, c) != NULL) {
     return -1;
@@ -47,7 +47,7 @@ int insert_node(hash_table *h, wchar_t c)
   if (h->array->total == h->array->size) {
     resize_and_rekey_hash_table(h, h->array->size * 2);
   }
-  node *node = alloc_node();
+  Node *node = alloc_node();
   init_node(node);
   node->key = c;
   node->isword = 0;
@@ -56,7 +56,7 @@ int insert_node(hash_table *h, wchar_t c)
   return 0;
 }
 
-int delete_node(hash_table *h, wchar_t c)
+int delete_node(HashTable *h, wchar_t c)
 {
   if (lookup_node(h, c) == NULL) {
     return -1;
@@ -69,10 +69,10 @@ int delete_node(hash_table *h, wchar_t c)
   return 0;
 }
 
-static void resize_and_rekey_hash_table(hash_table *h, int size)
+static void resize_and_rekey_hash_table(HashTable *h, int size)
 {
-  dyn_array *old_array = h->array;
-  dyn_array *new_array = alloc_dyn_array();
+  DynArray *old_array = h->array;
+  DynArray *new_array = alloc_dyn_array();
   init_dyn_array(new_array, NON_CONTINUOUS, size);
   h->array = new_array;
   h->array->size = size;
@@ -80,7 +80,7 @@ static void resize_and_rekey_hash_table(hash_table *h, int size)
   dealloc_dyn_array(old_array);
 }
 
-static int reinsert_node(hash_table *h, node *n)
+static int reinsert_node(HashTable *h, Node *n)
 {
   if (lookup_node(h, n->key) != NULL) {
     return -1;
@@ -90,9 +90,9 @@ static int reinsert_node(hash_table *h, node *n)
   return 0;
 }
 
-static void rekey_hash_table(hash_table *h, dyn_array *a)
+static void rekey_hash_table(HashTable *h, DynArray *a)
 {
-  node *current;
+  Node *current;
   int i;
   for (i = 0; i < a->size; i++)
   {
@@ -103,15 +103,15 @@ static void rekey_hash_table(hash_table *h, dyn_array *a)
   }
 }
 
-static int find_hash_index(hash_table *h, wchar_t c)
+static int find_hash_index(HashTable *h, wchar_t c)
 {
   int initial_index = find_initial_hash_index(h, c);
   int i;
-  node *result = NULL;
+  Node *result = NULL;
   for (i = 0; i < h->array->size; i++)
   {
     int index = (initial_index + i) % h->array->size;
-    node *result = lookup_dyn_array_node(h->array, index);
+    Node *result = lookup_dyn_array_node(h->array, index);
     if (result == NULL || result->key == c) {
       return index;
     }
@@ -119,7 +119,7 @@ static int find_hash_index(hash_table *h, wchar_t c)
   return -1;
 }
 
-static int find_initial_hash_index(hash_table *h, wchar_t c)
+static int find_initial_hash_index(HashTable *h, wchar_t c)
 {
   return c % h->array->size;
 }

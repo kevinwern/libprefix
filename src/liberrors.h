@@ -13,9 +13,9 @@
 typedef enum LIBPREFIX_ERROR_STATE {
   NO_ERROR,		// Default state if no error occurs.
   KEY_NOT_FOUND,	// Key not found in hash table.
-  INCORRECT_ARR_TYPE,	// No way to perform operation on type of dyn_array.
-  ARR_NOT_INIT,		// dyn_array not initialized.
-  INVALID_INDEX,	// Index outside of dyn_array.
+  INCORRECT_ARR_TYPE,	// No way to perform operation on type of DynArray.
+  ARR_NOT_INIT,		// DynArray not initialized.
+  INVALID_INDEX,	// Index outside of DynArray.
   INSUFFICIENT_TOTAL,	// Total assigned members too small for operation.
   INVALID_SIZE		// Size of array is invalid.
 } LIBPREFIX_ERROR_STATE;

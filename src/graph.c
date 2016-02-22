@@ -1,31 +1,32 @@
 // Graph.c
-// Core functionality for inserting, looking up, and deleting words.
+// Set implemented string comparison
 #include <stdlib.h>
 #include <stdio.h>
 #include "graph.h"
 #include "array.h"
 #include "hashtable.h"
 
-node *alloc_node()
+Node *alloc_node()
 {
-  node *node = malloc(sizeof(node));
+  Node *node = malloc(sizeof(Node));
   node->next = NULL;
   node->isword = 0;
   return node;
 }
 
-void dealloc_node(node *n)
+void dealloc_node(Node *n)
 {
   free(n);
 }
 
-void init_node (node *n){
-  hash_table *hashtable = alloc_hash_table();
+void init_node (Node *n)
+{
+  HashTable *hashtable = alloc_hash_table();
   init_hash_table(hashtable, DEFAULT_SIZE);
   n->next = hashtable;
 }
 
-void clear_node (node *n){
+void clear_node (Node *n){
   if (n->next != NULL)
   {
     clear_hash_table(n->next);
@@ -35,16 +36,16 @@ void clear_node (node *n){
   free(n->next);
 }
 
-static int is_leaf (node *n){
-   return ((hash_table *)n->next)->array->total == 0;
+static int is_leaf (Node *n){
+   return ((HashTable *)n->next)->array->total == 0;
 }
 
 // Look up a given word in the set
 // Params: a node, a word
-int find_word (node *graph, wchar_t *word){
-  node *searchPointer = graph;
+int find_word (Node *graph, wchar_t *word){
+  Node *searchPointer = graph;
   while (*word != L'\0' && searchPointer != NULL){
-      searchPointer = lookup_node((hash_table *)(searchPointer->next), *word);
+      searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
      word++;
   }
   if (*word != L'\0' || searchPointer == NULL)
@@ -55,30 +56,30 @@ int find_word (node *graph, wchar_t *word){
 
 // Insert a new word into the set
 // Params: a node, a word
-int insert_word (node *graph, wchar_t *word)
+int insert_word (Node *graph, wchar_t *word)
 {
-  node *searchPointer = graph;
+  Node *searchPointer = graph;
   while (*word != L'\0'){
-    insert_node((hash_table *)(searchPointer->next), *word);
-    searchPointer = lookup_node((hash_table *)(searchPointer->next), *word);
+    insert_node((HashTable *)(searchPointer->next), *word);
+    searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
     word++;
   }
   searchPointer->isword = 1;
   return 0;
 }
 
-// Remove a word in the set
-int delete_word (node *graph, wchar_t *word)
+ // Remove a word in the set
+int delete_word (Node *graph, wchar_t *word)
 {
-  node *lastwordnode = NULL, *searchPointer = graph;
+  Node *lastwordnode = NULL, *searchPointer = graph;
   while (*word != L'\0' && searchPointer != NULL){
-    if (searchPointer->isword && ((hash_table *)(searchPointer->next))->array->total == 1){
+    if (searchPointer->isword && ((HashTable *)(searchPointer->next))->array->total == 1){
       lastwordnode = searchPointer;
     }
-    else if (((hash_table *)(searchPointer->next))->array->total > 1) {
+    else if (((HashTable *)(searchPointer->next))->array->total > 1) {
       lastwordnode = NULL;
     }
-    searchPointer = lookup_node((hash_table *)(searchPointer->next), *word);
+    searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
     word++;
   }
   if (searchPointer == NULL)
