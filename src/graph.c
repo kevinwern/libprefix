@@ -19,8 +19,8 @@ void dealloc_node(Node *n)
   free(n);
 }
 
-void init_node (Node *n){
-  int i;
+void init_node (Node *n)
+{
   HashTable *hashtable = alloc_hash_table();
   init_hash_table(hashtable, DEFAULT_SIZE);
   n->next = hashtable;

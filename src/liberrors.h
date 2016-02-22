@@ -1,6 +1,15 @@
 #ifndef ERROR_H
 #define ERROR_H
 
+#define LIBPREFIX_ASSERT_INTERNAL(CONDITION, ERROR_TYPE, RETURN, ...)\
+    if (!(CONDITION)) {\
+        libprefix_set_error(ERROR_TYPE);\
+        return RETURN;\
+    }
+
+#define LIBPREFIX_ASSERT(...)\
+    LIBPREFIX_ASSERT_INTERNAL(__VA_ARGS__, -1)
+
 typedef enum LIBPREFIX_ERROR_STATE {
   NO_ERROR,		// Default state if no error occurs.
   KEY_NOT_FOUND,	// Key not found in hash table.
