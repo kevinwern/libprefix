@@ -1,44 +1,7 @@
 // Graph.c
 // Set implemented string comparison
 #include <stdlib.h>
-#include <stdio.h>
 #include "graph.h"
-#include "array.h"
-#include "hashtable.h"
-
-Node *alloc_node()
-{
-  Node *node = malloc(sizeof(Node));
-  node->next = NULL;
-  node->isword = 0;
-  return node;
-}
-
-void dealloc_node(Node *n)
-{
-  free(n);
-}
-
-void init_node (Node *n)
-{
-  HashTable *hashtable = alloc_hash_table();
-  init_hash_table(hashtable, DEFAULT_SIZE);
-  n->next = hashtable;
-}
-
-void clear_node (Node *n){
-  if (n->next != NULL)
-  {
-    clear_hash_table(n->next);
-    dealloc_hash_table(n->next);
-    n->next = NULL;
-  }
-  free(n->next);
-}
-
-static int is_leaf (Node *n){
-   return ((HashTable *)n->next)->array->total == 0;
-}
 
 // Look up a given word in the set
 // Params: a node, a word
@@ -52,6 +15,18 @@ int find_word (Node *graph, wchar_t *word){
     return 0;
   else
     return searchPointer->isword;
+}
+
+static Node *find_word_node(Node *graph, wchar_t *word){
+  Node *searchPointer = graph;
+  while (*word != L'\0' && searchPointer != NULL){
+      searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
+     word++;
+  }
+  if (*word != L'\0' || searchPointer == NULL)
+    return NULL;
+  else
+    return searchPointer;
 }
 
 // Insert a new word into the set
@@ -68,7 +43,8 @@ int insert_word (Node *graph, wchar_t *word)
   return 0;
 }
 
- // Remove a word in the set
+// Remove a word in the set
+// Params: a node, a word
 int delete_word (Node *graph, wchar_t *word)
 {
   Node *lastwordnode = NULL, *searchPointer = graph;

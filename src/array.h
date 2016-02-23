@@ -4,7 +4,7 @@
 #define ARRAY_H
 #define DEFAULT_SIZE 2
 #define MIN_SIZE 2
-#include "graph.h"
+#include "node.h"
 #include "defaultargs.h"
 #include "liberrors.h"
 #include <wchar.h>
@@ -73,6 +73,5 @@ static int lookup_dyn_array_index_hashed(DynArray *a, wchar_t c);
 
 //Delete from hash table key
 static void find_hash_key_and_do_delete(DynArray *a, wchar_t c);
-
 
 #endif

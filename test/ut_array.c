@@ -7,7 +7,6 @@
 #include <string.h>
 #include <wchar.h>
 #include "../src/array.h"
-#include "../src/graph.h"
 
 DynArray* test_array;
 
