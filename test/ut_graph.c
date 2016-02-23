@@ -76,9 +76,35 @@ START_TEST (ut_graph_load_dictionary)
   while (fgetws(word, 80, fp)) 
   {
     word[wcslen(word)-1] = L'\0';
-     ck_assert_msg(find_word(graph, word) == 1, "Can't find word %ls in full dictionary test\n", word);
+    ck_assert_msg(find_word(graph, word) == 1, "Can't find word %ls in full dictionary test\n", word);
   }
   fclose(fp);
+
+  clear_node(graph);
+}
+END_TEST
+
+START_TEST (ut_graph_load_dictionary_prefix_search)
+{
+  init_node(graph);
+
+  FILE *fp = fopen("/usr/share/dict/words", "r");
+  wchar_t word[1000];
+
+  while (fgetws(word, 80, fp))
+  {
+    word[wcslen(word)-1] = L'\0';
+    insert_word(graph, word);
+  }
+  fclose(fp);
+
+  PrefixResult *result = search_prefix(graph, L"app");
+
+  while(result != NULL)
+  {
+    printf("%Ls\n", result->word);
+    result = result->next;
+  }
 
   clear_node(graph);
 }
@@ -97,6 +123,10 @@ Suite *graph_suite (void)
   tcase_add_test(tc_graph_load_dictionary, ut_graph_load_dictionary);
   tcase_add_checked_fixture(tc_graph_load_dictionary, setup, teardown);
   suite_add_tcase (s, tc_graph_load_dictionary);
+  TCase *tc_graph_load_dictionary_prefix_search = tcase_create ("unit_test_graph_dict_prefix_search");
+  tcase_add_test(tc_graph_load_dictionary_prefix_search, ut_graph_load_dictionary_prefix_search);
+  tcase_add_checked_fixture(tc_graph_load_dictionary_prefix_search, setup, teardown);
+  suite_add_tcase (s, tc_graph_load_dictionary_prefix_search);
 
   return s;
 }
