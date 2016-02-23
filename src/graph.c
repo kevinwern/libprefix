@@ -8,7 +8,7 @@
 int find_word (Node *graph, wchar_t *word){
   Node *searchPointer = graph;
   while (*word != L'\0' && searchPointer != NULL){
-      searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
+     searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
      word++;
   }
   if (*word != L'\0' || searchPointer == NULL)
@@ -20,13 +20,14 @@ int find_word (Node *graph, wchar_t *word){
 static Node *find_word_node(Node *graph, wchar_t *word){
   Node *searchPointer = graph;
   while (*word != L'\0' && searchPointer != NULL){
-      searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
+     searchPointer = lookup_node((HashTable *)(searchPointer->next), *word);
      word++;
   }
   if (*word != L'\0' || searchPointer == NULL)
     return NULL;
-  else
+  else {
     return searchPointer;
+  }
 }
 
 // Insert a new word into the set
@@ -66,4 +67,47 @@ int delete_word (Node *graph, wchar_t *word)
     dealloc_node(lastwordnode);
   }
   return 0;
+}
+
+PrefixResult *search_prefix(Node *graph, wchar_t *search_string)
+{
+  Node *search_result_root = find_word_node(graph, search_string);
+  DynArray *current_string = alloc_dyn_array();
+  PrefixResult *result = NULL;
+  init_dyn_array(current_string);
+  while (*search_string != L'\0')
+  {
+    append_dyn_array_char(current_string, *search_string);
+    search_string++;
+  }
+  get_permutations(search_result_root, current_string, &result);
+  return result;
+}
+
+static void get_permutations(Node *location, DynArray *current_string, PrefixResult **collection)
+{
+  HashTable *current_hash_table = (HashTable *)(location->next);
+  DynArray *internal_array = current_hash_table->array;
+  if (location->isword)
+  {
+    PrefixResult *new_result = malloc(sizeof(PrefixResult));
+    new_result->next = *collection;
+    new_result->word = dyn_array_to_str(current_string);
+    *collection = new_result;
+  }
+  if (is_leaf(location)) {
+    return;
+  }
+  else {
+    int i;
+    for (i = 0; i < internal_array->size; i++)
+    {
+       Node *next_node = lookup_dyn_array_node(internal_array, i);
+       if (next_node != NULL) {
+           append_dyn_array_char(current_string, next_node->key);
+           get_permutations(next_node, current_string, collection);
+           pop_dyn_array(current_string);
+       }
+    }
+  }
 }
