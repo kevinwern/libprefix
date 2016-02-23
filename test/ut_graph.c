@@ -2,6 +2,7 @@
 // unit test for graphraph.h library
 #include <check.h>
 #include <stdio.h>
+#include <locale.h>
 #include "../src/graph.h"
 
 Node *graph;
@@ -101,6 +102,7 @@ Suite *graph_suite (void)
 }
 
 int main() {
+  setlocale(LC_ALL,"");
   int number_failed;
   Suite *s = graph_suite();
   SRunner *sr = srunner_create(s);
