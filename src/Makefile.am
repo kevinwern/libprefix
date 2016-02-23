@@ -1,4 +1,2 @@
-lib_LTLIBRARIES = libarray.la libhashtable.la libgraph.la
-libgraph_la_SOURCES = graph.h graph.c hashtable.h hashtable.c
-libarray_la_SOURCES = array.h array.c liberrors.h liberrors.c graph.h
-libhashtable_la_SOURCES = hashtable.h hashtable.c array.h array.c graph.h liberrors.h liberrors.c 
+lib_LTLIBRARIES = libgraph.la
+libgraph_la_SOURCES = graph.h graph.c array.h array.c node.h node.c hashtable.h hashtable.c liberrors.h liberrors.c

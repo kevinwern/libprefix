@@ -5,19 +5,14 @@
 #define GRAPH_H
 #include <stdlib.h>
 #include <wchar.h>
+#include "node.h"
+#include "array.h"
+#include "hashtable.h"
 
-typedef struct Node {
-  wchar_t key;
-  int isword;
-  void *next;
-} Node;
-
-
-Node *alloc_node();
-void dealloc_node(Node *n);
-
-void init_node(Node *n);
-void clear_node(Node *n);
+typedef struct PrefixResult {
+  wchar_t *word;
+  struct PrefixResult *next;
+} PrefixResult;
 
 // Look up a given word in the set
 // Params: a node, a word
@@ -31,8 +26,8 @@ int insert_word(Node *graph, wchar_t *word);
 int delete_word(Node *graph, wchar_t *word);
 
 // Print the contents of a set
-void print_graph(Node *graph);
+PrefixResult *search_prefix(Node *graph, wchar_t *search_string);
 
-static int is_leaf(Node *n);
+static void get_permutations(Node *graph, DynArray *current_string, PrefixResult **collection);
 
 #endif

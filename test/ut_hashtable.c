@@ -5,9 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../src/array.h"
 #include "../src/hashtable.h"
-#include "../src/graph.h"
 
 HashTable *test_hash_table;
 
