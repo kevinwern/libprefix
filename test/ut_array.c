@@ -46,7 +46,7 @@ END_TEST
 START_TEST (ut_array_append_char)
 {
   init_dyn_array(test_array);
-  wchar_t character_to_insert = 'c', returned_character;
+  wchar_t character_to_insert = L'c', returned_character;
   int expected_index = 0;
   append_dyn_array_char(test_array, character_to_insert);
   returned_character = lookup_dyn_array_char(test_array, expected_index);
@@ -60,7 +60,7 @@ END_TEST
 START_TEST (ut_array_append_pop_char)
 {
   init_dyn_array(test_array);
-  wchar_t character_to_insert = 'c', returned_character;
+  wchar_t character_to_insert = L'c', returned_character;
   int expected_index = 0;
   append_dyn_array_char(test_array, character_to_insert);
   returned_character = pop_dyn_array(test_array);
@@ -92,7 +92,7 @@ START_TEST (ut_array_to_str)
   int j;
   wchar_t expected[27];
   wchar_t *result;
-  for (i = 'a', j = 0; i <= 'z'; i++, j++)
+  for (i = L'a', j = 0; i <= L'z'; i++, j++)
   {
     append_dyn_array_char(test_array, i);
     expected[j] = i;
