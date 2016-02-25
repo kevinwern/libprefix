@@ -11,6 +11,7 @@ typedef struct Node {
 
 Node *alloc_node();
 void dealloc_node(Node *n);
+int is_leaf(Node *n);
 
 void init_node(Node *n);
 void clear_node(Node *n);
