@@ -1,0 +1,5 @@
+Refactor headers so library exposes graph functions only
+Add AVL tree for sorted output
+Add payload per node
+Implement compressed tries (only create pointers for divergences)
+Remove malloc casting, audit casting instances to see if necessary in each case
