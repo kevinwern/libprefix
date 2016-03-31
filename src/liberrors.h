@@ -11,13 +11,14 @@
     LIBPREFIX_ASSERT_INTERNAL(__VA_ARGS__, -1)
 
 typedef enum LIBPREFIX_ERROR_STATE {
-  NO_ERROR,		// Default state if no error occurs.
-  KEY_NOT_FOUND,	// Key not found in hash table.
-  INCORRECT_ARR_TYPE,	// No way to perform operation on type of DynArray.
-  ARR_NOT_INIT,		// DynArray not initialized.
-  INVALID_INDEX,	// Index outside of DynArray.
-  INSUFFICIENT_TOTAL,	// Total assigned members too small for operation.
-  INVALID_SIZE		// Size of array is invalid.
+  NO_ERROR		// Default state if no error occurs.
+  ,KEY_NOT_FOUND	// Key not found in hash table.
+  ,INCORRECT_ARR_TYPE	// No way to perform operation on type of DynArray.
+  ,ARR_NOT_INIT		// DynArray not initialized.
+  ,INVALID_INDEX	// Index outside of DynArray.
+  ,INSUFFICIENT_TOTAL	// Total assigned members too small for operation.
+  ,INVALID_SIZE		// Size of array is invalid.
+  ,MALLOC_FAILED // malloc returned NULL
 } LIBPREFIX_ERROR_STATE;
 
 extern LIBPREFIX_ERROR_STATE LIBPREFIX_ERROR;

@@ -1,6 +1,7 @@
 // hashtable.c -- Wraparound for DynArray
 // that acts as a hash table.
 #include "hashtable.h"
+#include "liberrors.h"
 
 void init_hash_table(HashTable *h, int size)
 {
@@ -19,6 +20,7 @@ void clear_hash_table(HashTable *h)
 HashTable *alloc_hash_table()
 {
   HashTable *hash_table = malloc(sizeof(HashTable));
+  LIBPREFIX_ASSERT(hash_table != NULL, MALLOC_FAILED, NULL)
   hash_table->array = NULL;
   return hash_table;
 }

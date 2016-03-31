@@ -28,6 +28,6 @@ int delete_word(Node *graph, wchar_t *word);
 // Print the contents of a set
 PrefixResult *search_prefix(Node *graph, wchar_t *search_string);
 
-static void get_permutations(Node *graph, DynArray *current_string, PrefixResult **collection);
+static int get_permutations(Node *graph, DynArray *current_string, PrefixResult **collection);
 
 #endif

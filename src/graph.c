@@ -2,6 +2,7 @@
 // Set implemented string comparison
 #include <stdlib.h>
 #include "graph.h"
+#include "liberrors.h"
 
 // Look up a given word in the set
 // Params: a node, a word
@@ -80,34 +81,46 @@ PrefixResult *search_prefix(Node *graph, wchar_t *search_string)
     append_dyn_array_char(current_string, *search_string);
     search_string++;
   }
-  get_permutations(search_result_root, current_string, &result);
-  return result;
+  if (get_permutations(search_result_root, current_string, &result) == 0) {
+    clear_dyn_array(current_string);
+    dealloc_dyn_array(current_string);
+    return result;
+  }
+  else {
+    return NULL;
+  }
 }
 
-static void get_permutations(Node *location, DynArray *current_string, PrefixResult **collection)
+static int get_permutations(Node *location, DynArray *current_string, PrefixResult **collection)
 {
   HashTable *current_hash_table = (HashTable *)(location->next);
   DynArray *internal_array = current_hash_table->array;
   if (location->isword)
   {
     PrefixResult *new_result = malloc(sizeof(PrefixResult));
+    LIBPREFIX_ASSERT(new_result != NULL, MALLOC_FAILED)
     new_result->next = *collection;
     new_result->word = dyn_array_to_str(current_string);
     *collection = new_result;
   }
   if (is_leaf(location)) {
-    return;
+    return 0;
   }
   else {
     int i;
     for (i = 0; i < internal_array->size; i++)
     {
-       Node *next_node = lookup_dyn_array_node(internal_array, i);
-       if (next_node != NULL) {
-           append_dyn_array_char(current_string, next_node->key);
-           get_permutations(next_node, current_string, collection);
-           pop_dyn_array(current_string);
-       }
+      Node *next_node = lookup_dyn_array_node(internal_array, i);
+      if (next_node != NULL) {
+        append_dyn_array_char(current_string, next_node->key);
+        if (get_permutations(next_node, current_string, collection) == 0) {
+          pop_dyn_array(current_string);
+        }
+        else {
+          return -1;
+        }
+      }
     }
   }
+  return 0;
 }

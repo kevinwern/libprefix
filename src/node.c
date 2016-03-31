@@ -1,9 +1,11 @@
 #include "node.h"
 #include "hashtable.h"
+#include "liberrors.h"
 
 Node *alloc_node()
 {
   Node *node = malloc(sizeof(Node));
+  LIBPREFIX_ASSERT(node != NULL, MALLOC_FAILED, NULL);
   node->next = NULL;
   node->isword = 0;
   return node;

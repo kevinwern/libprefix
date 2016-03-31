@@ -6,6 +6,7 @@
 DynArray *alloc_dyn_array()
 {
   DynArray *new_array = (DynArray *) malloc(sizeof(DynArray));
+  LIBPREFIX_ASSERT(new_array != NULL, MALLOC_FAILED, NULL);
   new_array->size = 0;
   new_array->total = 0;
   new_array->type = UNINITIALIZED;
@@ -29,6 +30,7 @@ int init_dyn_array3(DynArray *a, ArrayType type, int size)
   }
   a->total = 0;
   a->array = malloc(sizeof(void *) * a->size);
+  LIBPREFIX_ASSERT(a->array != NULL, MALLOC_FAILED);
   for (i = 0; i < size; i++){
     a->array[i] = NULL;
   }
@@ -62,10 +64,15 @@ int append_dyn_array_char(DynArray *a, wchar_t c)
     for (i=size; i<a->size; i++)
     {
       a->array[i] = (wchar_t *) malloc(sizeof(wchar_t));
+      LIBPREFIX_ASSERT(a->array[i] != NULL, MALLOC_FAILED);
     }
   }
 
-  if (a->array[a->total] == NULL) a->array[a->total] = (wchar_t *) malloc(sizeof(wchar_t));
+  if (a->array[a->total] == NULL) 
+  {
+      a->array[a->total] = (wchar_t *) malloc(sizeof(wchar_t));
+      LIBPREFIX_ASSERT(a->array[a->total] != NULL, MALLOC_FAILED);
+  }
   *(wchar_t *)((wchar_t **)a->array)[a->total] = c;
   a->total=a->total+1;
   return 0;
@@ -170,6 +177,7 @@ wchar_t *dyn_array_to_str(DynArray *a)
   LIBPREFIX_ASSERT(a->type == CONTINUOUS, INCORRECT_ARR_TYPE, NULL);
 
   wchar_t *return_string = malloc(sizeof(wchar_t) * (a->total+1));
+  LIBPREFIX_ASSERT(return_string != NULL, MALLOC_FAILED, NULL);
   int i;
   for (i = 0; i < a->total; i++){
     return_string[i] = *((wchar_t **) a->array)[i];
