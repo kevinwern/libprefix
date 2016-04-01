@@ -1,6 +1,5 @@
 #ifndef NODE_H
 #define NODE_H
-//#include "hashtable.h"
 #include <wchar.h>
 
 typedef struct Node {
