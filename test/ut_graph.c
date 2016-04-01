@@ -94,6 +94,7 @@ START_TEST (ut_graph_load_dictionary_prefix_search)
   while (fgetws(word, 80, fp))
   {
     word[wcslen(word)-1] = L'\0';
+    printf("%ls\n", word);
     insert_word(graph, word);
   }
   fclose(fp);
@@ -102,7 +103,7 @@ START_TEST (ut_graph_load_dictionary_prefix_search)
 
   while(result != NULL)
   {
-    printf("%Ls\n", result->word);
+    printf("%ls\n", result->word);
     result = result->next;
   }
 
