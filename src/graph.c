@@ -61,7 +61,7 @@ int delete_word (Node *graph, wchar_t *word)
     word++;
   }
   if (searchPointer == NULL)
-    return 1;
+    return -1;
   searchPointer->isword = 0;
   if (lastwordnode != NULL){
     clear_node(lastwordnode);
