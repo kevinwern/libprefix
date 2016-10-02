@@ -1,5 +1,6 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
+#include <wchar.h>
 #include "array.h"
 #include "graph.h"
 
