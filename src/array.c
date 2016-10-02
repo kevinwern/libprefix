@@ -78,6 +78,37 @@ int append_dyn_array_char(DynArray *a, wchar_t c)
   return 0;
 }
 
+// Add character after last assigned member.
+int append_dyn_array_node(DynArray *a, Node *n)
+{
+  LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT);
+  LIBPREFIX_ASSERT(a->type == CONTINUOUS, INCORRECT_ARR_TYPE);
+
+  int size = a->size;
+  int i;
+  while (a->size < a->total+1){
+    a->size *= 2;
+  }
+  if (size != a->size)
+  {
+    a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
+    for (i=size; i<a->size; i++)
+    {
+      a->array[i] = (Node *) malloc(sizeof(Node));
+      LIBPREFIX_ASSERT(a->array[i] != NULL, MALLOC_FAILED);
+    }
+  }
+
+  if (a->array[a->total] == NULL) 
+  {
+      a->array[a->total] = (Node *) malloc(sizeof(Node));
+      LIBPREFIX_ASSERT(a->array[a->total] != NULL, MALLOC_FAILED);
+  }
+  *(Node *)((Node **)a->array)[a->total] = n;
+  a->total=a->total+1;
+  return 0;
+}
+
 // Insert node at any point in DynArray
 int insert_dyn_array_node(DynArray *a, Node *n, int index)
 {
@@ -163,6 +194,21 @@ wchar_t pop_dyn_array(DynArray *a)
   int size = a->size;
   a->total = a->total-1;
   wchar_t to_return = *(wchar_t *) a->array[a->total];
+  while (size / 2 >= a->total  && size > MIN_SIZE){
+    size /= 2;
+  }
+  resize_array(a, size);
+  return to_return;
+}
+
+Node *pop_dyn_array_node(DynArray *a)
+{
+  LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT, NULL);
+  LIBPREFIX_ASSERT(a->total > 0, INSUFFICIENT_TOTAL, NULL);
+
+  int size = a->size;
+  a->total = a->total-1;
+  Node *to_return = (Node *) a->array[a->total];
   while (size / 2 >= a->total  && size > MIN_SIZE){
     size /= 2;
   }

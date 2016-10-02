@@ -32,11 +32,17 @@ int init_dyn_array3(DynArray *a, ArrayType type, int size);
 int init_dyn_array2(DynArray *a, ArrayType type);
 int init_dyn_array1(DynArray *a);
 
-//Remove last item in array, returning that item
+//Remove last char in array, returning that char
 wchar_t pop_dyn_array(DynArray *a);
+
+//Remove last node in array, returning that node
+Node *pop_dyn_array_node(DynArray *a);
 
 //Insert single character into array
 int append_dyn_array_char(DynArray *a, wchar_t c);
+
+//Append node to end of array
+int append_dyn_array_node(DynArray *a, Node *n);
 
 //Insert node into array
 int insert_dyn_array_node(DynArray *a, Node* n, int index);
