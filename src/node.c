@@ -34,6 +34,7 @@ void clear_node (Node *n){
 }
 
 int is_leaf (Node *n){
-   return ((HashTable *)n->next)->array->total == 0;
+   HashTable *hash_table = n->next;
+   return hash_table->array->total == 0;
 }
 

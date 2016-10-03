@@ -73,7 +73,7 @@ int append_dyn_array_char(DynArray *a, wchar_t c)
       a->array[a->total] = malloc(sizeof(wchar_t));
       LIBPREFIX_ASSERT(a->array[a->total] != NULL, MALLOC_FAILED);
   }
-  *(wchar_t *)((wchar_t **)a->array)[a->total] = c;
+  *((wchar_t **) a->array)[a->total] = c;
   a->total=a->total+1;
   return 0;
 }
@@ -91,7 +91,7 @@ int append_dyn_array_node(DynArray *a, Node *n)
   }
   if (size != a->size)
   {
-    a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
+    a->array = realloc(a->array, sizeof(Node *) * a->size);
     for (i=size; i<a->size; i++)
     {
       a->array[i] = malloc(sizeof(Node));
@@ -135,7 +135,7 @@ wchar_t lookup_dyn_array_char(DynArray *a, int index)
   LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT);
   LIBPREFIX_ASSERT(index < a->size || index >= 0, INVALID_INDEX);
 
-  return *(wchar_t*) a->array[index];
+  return *((wchar_t **) a->array)[index];
 }
 
 // Lookup Node at any point in DynArray
@@ -144,7 +144,7 @@ Node *lookup_dyn_array_node(DynArray *a, int index)
   LIBPREFIX_ASSERT(a->type != UNINITIALIZED, ARR_NOT_INIT, NULL);
   LIBPREFIX_ASSERT(a->type == NON_CONTINUOUS, INCORRECT_ARR_TYPE, NULL);
   LIBPREFIX_ASSERT(index < a->size || index >= 0, INVALID_INDEX, NULL);
-  return (Node *)(((Node **)a->array)[index]);
+  return a->array[index];
 }
 
 // Delete Node from any point in DynArray
@@ -181,7 +181,7 @@ void remove_dyn_array(DynArray *a, int remove)
       a->size /= 2;
     }
     a->total = newsize;
-    a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
+    a->array = realloc(a->array, sizeof(Node *) * a->size);
   }
 }
 
@@ -193,7 +193,7 @@ wchar_t pop_dyn_array(DynArray *a)
 
   int size = a->size;
   a->total = a->total-1;
-  wchar_t to_return = *(wchar_t *) a->array[a->total];
+  wchar_t to_return = *((wchar_t **) a->array)[a->total];
   while (size / 2 >= a->total  && size > MIN_SIZE){
     size /= 2;
   }
@@ -208,7 +208,7 @@ Node *pop_dyn_array_node(DynArray *a)
 
   int size = a->size;
   a->total = a->total-1;
-  Node *to_return = (Node *) a->array[a->total];
+  Node *to_return = a->array[a->total];
   while (size / 2 >= a->total  && size > MIN_SIZE){
     size /= 2;
   }
