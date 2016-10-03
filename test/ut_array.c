@@ -23,17 +23,17 @@ void teardown (void)
 START_TEST (ut_array_init)
 {
   int custom_size = 8;
-  init_dyn_array(test_array);
+  init_dyn_array(wchar_t *, test_array);
   ck_assert_msg(test_array->size == DEFAULT_SIZE,
     "One-parameter call to init_dyn_array did not set size to DEFAULT_SIZE. Got size %d.", test_array->size);
   ck_assert_msg(test_array->type == CONTINUOUS,
     "One-parameter call to init_dyn_array did not set type to CONTINUOUS.");
-  init_dyn_array(test_array, NON_CONTINUOUS);
+  init_dyn_array(wchar_t *, test_array, NON_CONTINUOUS);
   ck_assert_msg(test_array->size == DEFAULT_SIZE,
     "Two-parameter call to init_dyn_array did not set size to DEFAULT_SIZE. Got size %d.", test_array->size);
   ck_assert_msg(test_array->type == NON_CONTINUOUS,
     "Two-parameter call to init_dyn_array did not set type to prescribed NON_CONTINUOUS.");
-  init_dyn_array(test_array, NON_CONTINUOUS, custom_size);
+  init_dyn_array(wchar_t *, test_array, NON_CONTINUOUS, custom_size);
   ck_assert_msg(test_array->size == custom_size,
     "Three-parameter call to init_dyn_array did not set size to prescribed value %d. Got size %d.", 
     custom_size, test_array->size);
@@ -45,7 +45,7 @@ END_TEST
 
 START_TEST (ut_array_append_char)
 {
-  init_dyn_array(test_array);
+  init_dyn_array(wchar_t *, test_array);
   wchar_t character_to_insert = L'c', returned_character;
   int expected_index = 0;
   append_dyn_array_char(test_array, character_to_insert);
@@ -59,7 +59,7 @@ END_TEST
 
 START_TEST (ut_array_append_pop_char)
 {
-  init_dyn_array(test_array);
+  init_dyn_array(wchar_t *, test_array);
   wchar_t character_to_insert = L'c', returned_character;
   int expected_index = 0;
   append_dyn_array_char(test_array, character_to_insert);
@@ -73,7 +73,7 @@ END_TEST
 
 START_TEST (ut_array_insert_node)
 {
-  init_dyn_array(test_array, NON_CONTINUOUS);
+  init_dyn_array(Node*, test_array, NON_CONTINUOUS);
   int index_to_add = 1;
   Node *test_node, *node;
   node = alloc_node();
@@ -87,7 +87,7 @@ END_TEST
 
 START_TEST (ut_array_to_str)
 {
-  init_dyn_array(test_array);
+  init_dyn_array(wchar_t *, test_array);
   wchar_t i;
   int j;
   wchar_t expected[27];

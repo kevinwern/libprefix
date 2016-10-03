@@ -76,7 +76,7 @@ PrefixResult *search_prefix(Node *graph, wchar_t *search_string)
   Node *search_result_root = find_word_node(graph, search_string);
   DynArray *current_string = alloc_dyn_array();
   PrefixResult *result = NULL;
-  init_dyn_array(current_string);
+  init_dyn_array(wchar_t *, current_string);
   while (*search_string != L'\0')
   {
     append_dyn_array_char(current_string, *search_string);

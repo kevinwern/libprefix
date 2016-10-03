@@ -8,7 +8,8 @@
 #include "defaultargs.h"
 #include "liberrors.h"
 #include <wchar.h>
-#define init_dyn_array(...) EVALUATE(init_dyn_array, ARGN(__VA_ARGS__))(__VA_ARGS__)
+#define init_dyn_array_helper(...) EVALUATE(init_dyn_array, ARGN(__VA_ARGS__))(__VA_ARGS__)
+#define init_dyn_array(TYPE, ...) init_dyn_array_helper(__VA_ARGS__, sizeof(TYPE))
 
 typedef enum ArrayType {
   UNINITIALIZED,
@@ -19,8 +20,9 @@ typedef enum ArrayType {
 typedef struct DynArray {
   ArrayType type;
   void **array;
-  int  size;
-  int  total;
+  int member_size;
+  int size;
+  int total;
 } DynArray;
 
 DynArray *alloc_dyn_array();
@@ -28,9 +30,9 @@ void dealloc_dyn_array(DynArray *a);
 
 // Initialize array based on size
 // Default arguments: size = DEFAULT_SIZE, type = CONTINUOUS
-int init_dyn_array3(DynArray *a, ArrayType type, int size);
-int init_dyn_array2(DynArray *a, ArrayType type);
-int init_dyn_array1(DynArray *a);
+int init_dyn_array4(DynArray *a, ArrayType type, size_t size, size_t member_size);
+int init_dyn_array3(DynArray *a, ArrayType type, size_t member_size);
+int init_dyn_array2(DynArray *a, size_t member_size);
 
 //Remove last char in array, returning that char
 wchar_t pop_dyn_array(DynArray *a);

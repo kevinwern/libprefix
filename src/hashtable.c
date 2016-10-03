@@ -6,12 +6,13 @@
 void init_hash_table(HashTable *h, int size)
 {
   h->array = alloc_dyn_array();
-  init_dyn_array(h->array, NON_CONTINUOUS, size);
+  init_dyn_array(Node*, h->array, NON_CONTINUOUS, size);
 }
 
 void clear_hash_table(HashTable *h)
 {
   if (h->array != NULL) {
+
     clear_dyn_array(h->array);
   }
   dealloc_dyn_array(h->array);
@@ -75,7 +76,7 @@ static void resize_and_rekey_hash_table(HashTable *h, int size)
 {
   DynArray *old_array = h->array;
   DynArray *new_array = alloc_dyn_array();
-  init_dyn_array(new_array, NON_CONTINUOUS, size);
+  init_dyn_array(Node*, new_array, NON_CONTINUOUS, size);
   h->array = new_array;
   h->array->size = size;
   rekey_hash_table(h, old_array);

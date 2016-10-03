@@ -15,7 +15,8 @@ DynArray *alloc_dyn_array()
 }
 
 // Initialize array, optionally based on size and type.
-int init_dyn_array3(DynArray *a, ArrayType type, int size)
+int init_dyn_array4(DynArray *a, ArrayType type, size_t size,
+                    size_t member_size)
 {
   LIBPREFIX_ASSERT(size % 2 == 0 && size > 0, INVALID_SIZE);
   if (a->type != UNINITIALIZED)
@@ -28,8 +29,9 @@ int init_dyn_array3(DynArray *a, ArrayType type, int size)
   while (a->size<size) {
     a->size *= 2;
   }
+  a->member_size = member_size;
   a->total = 0;
-  a->array = malloc(sizeof(void *) * a->size);
+  a->array = malloc(member_size * a->size);
   LIBPREFIX_ASSERT(a->array != NULL, MALLOC_FAILED);
   for (i = 0; i < size; i++){
     a->array[i] = NULL;
@@ -37,14 +39,14 @@ int init_dyn_array3(DynArray *a, ArrayType type, int size)
   return 0;
 }
 
-int init_dyn_array2(DynArray *a, ArrayType type)
+int init_dyn_array3(DynArray *a, ArrayType type, size_t member_size)
 {
-  return init_dyn_array3(a, type, DEFAULT_SIZE);
+  return init_dyn_array4(a, type, DEFAULT_SIZE, member_size);
 }
 
-int init_dyn_array1(DynArray *a)
+int init_dyn_array2(DynArray *a, size_t member_size)
 {
-  return init_dyn_array3(a, CONTINUOUS, DEFAULT_SIZE);
+  return init_dyn_array4(a, CONTINUOUS, DEFAULT_SIZE, member_size);
 }
 
 // Add character after last assigned member.
@@ -60,7 +62,7 @@ int append_dyn_array_char(DynArray *a, wchar_t c)
   }
   if (size != a->size)
   {
-    a->array = realloc(a->array, sizeof(void *) * a->size);
+    a->array = realloc(a->array, a->member_size * a->size);
     for (i=size; i<a->size; i++)
     {
       a->array[i] = malloc(sizeof(wchar_t));
@@ -272,7 +274,7 @@ static int resize_array(DynArray *a, int size)
 
   int i;
   if (size >= a->size) {
-    a->array = realloc(a->array, sizeof(void *) * size);
+    a->array = realloc(a->array, a->member_size * size);
     for (i = a->size; i < size; i++) {
        a->array[i] = NULL;
     }
@@ -284,7 +286,7 @@ static int resize_array(DynArray *a, int size)
         a->array[i] = NULL;
       }
     }
-    a->array = realloc(a->array, sizeof(void *) * size);
+    a->array = realloc(a->array, a->member_size * size);
   }
   a->size = size;
   return 0;
