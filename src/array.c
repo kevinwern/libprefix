@@ -5,7 +5,7 @@
 
 DynArray *alloc_dyn_array()
 {
-  DynArray *new_array = (DynArray *) malloc(sizeof(DynArray));
+  DynArray *new_array = malloc(sizeof(DynArray));
   LIBPREFIX_ASSERT(new_array != NULL, MALLOC_FAILED, NULL);
   new_array->size = 0;
   new_array->total = 0;
@@ -60,17 +60,17 @@ int append_dyn_array_char(DynArray *a, wchar_t c)
   }
   if (size != a->size)
   {
-    a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
+    a->array = realloc(a->array, sizeof(void *) * a->size);
     for (i=size; i<a->size; i++)
     {
-      a->array[i] = (wchar_t *) malloc(sizeof(wchar_t));
+      a->array[i] = malloc(sizeof(wchar_t));
       LIBPREFIX_ASSERT(a->array[i] != NULL, MALLOC_FAILED);
     }
   }
 
   if (a->array[a->total] == NULL) 
   {
-      a->array[a->total] = (wchar_t *) malloc(sizeof(wchar_t));
+      a->array[a->total] = malloc(sizeof(wchar_t));
       LIBPREFIX_ASSERT(a->array[a->total] != NULL, MALLOC_FAILED);
   }
   *(wchar_t *)((wchar_t **)a->array)[a->total] = c;
@@ -94,17 +94,17 @@ int append_dyn_array_node(DynArray *a, Node *n)
     a->array = (void **) realloc(a->array, sizeof(void *) * a->size);
     for (i=size; i<a->size; i++)
     {
-      a->array[i] = (Node *) malloc(sizeof(Node));
+      a->array[i] = malloc(sizeof(Node));
       LIBPREFIX_ASSERT(a->array[i] != NULL, MALLOC_FAILED);
     }
   }
 
   if (a->array[a->total] == NULL) 
   {
-      a->array[a->total] = (Node *) malloc(sizeof(Node));
+      a->array[a->total] = malloc(sizeof(Node));
       LIBPREFIX_ASSERT(a->array[a->total] != NULL, MALLOC_FAILED);
   }
-  *(Node *)((Node **)a->array)[a->total] = n;
+  a->array[a->total] = n;
   a->total=a->total+1;
   return 0;
 }
