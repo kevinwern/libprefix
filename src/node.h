@@ -6,6 +6,7 @@ typedef struct Node {
   wchar_t key;
   int isword;
   void *next;
+  void *data;
 } Node;
 
 Node *alloc_node();
