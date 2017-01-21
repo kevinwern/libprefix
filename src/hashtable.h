@@ -16,11 +16,11 @@ void init_hash_table(HashTable *h, int size);
 
 void clear_hash_table(HashTable *h);
 
-int insert_node(HashTable *h, wchar_t c);
+int insert_node_hash_table(HashTable *h, wchar_t c);
 
-Node* lookup_node(HashTable *h, wchar_t c);
+Node* lookup_node_hash_table(HashTable *h, wchar_t c);
 
-int delete_node(HashTable *h, wchar_t c);
+int delete_node_hash_table(HashTable *h, wchar_t c);
 
 static void resize_and_rekey_hash_table(HashTable *h, int size);
 

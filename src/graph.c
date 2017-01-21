@@ -9,7 +9,7 @@
 int find_word (Node *graph, wchar_t *word){
   Node *searchPointer = graph;
   while (*word != L'\0' && searchPointer != NULL){
-     searchPointer = lookup_node(searchPointer->next, *word);
+     searchPointer = lookup_node_hash_table(searchPointer->next, *word);
      word++;
   }
   if (*word != L'\0' || searchPointer == NULL)
@@ -21,7 +21,7 @@ int find_word (Node *graph, wchar_t *word){
 static Node *find_word_node(Node *graph, wchar_t *word){
   Node *searchPointer = graph;
   while (*word != L'\0' && searchPointer != NULL){
-     searchPointer = lookup_node(searchPointer->next, *word);
+     searchPointer = lookup_node_hash_table(searchPointer->next, *word);
      word++;
   }
   if (*word != L'\0' || searchPointer == NULL)
@@ -37,8 +37,8 @@ int insert_word (Node *graph, wchar_t *word)
 {
   Node *searchPointer = graph;
   while (*word != L'\0'){
-    insert_node(searchPointer->next, *word);
-    searchPointer = lookup_node(searchPointer->next, *word);
+    insert_node_hash_table(searchPointer->next, *word);
+    searchPointer = lookup_node_hash_table(searchPointer->next, *word);
     word++;
   }
   searchPointer->isword = 1;
@@ -58,7 +58,7 @@ int delete_word (Node *graph, wchar_t *word)
     else if (word_table->array->total > 1) {
       lastwordnode = NULL;
     }
-    searchPointer = lookup_node(word_table, *word);
+    searchPointer = lookup_node_hash_table(word_table, *word);
     word++;
   }
   if (searchPointer == NULL)

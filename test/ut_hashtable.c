@@ -34,12 +34,12 @@ START_TEST (ut_hash_table_insert_and_lookup)
   Node *result;
   for (c = L'a'; c <= L'z'; c++)
   {
-    insert_node(test_hash_table, c);
+    insert_node_hash_table(test_hash_table, c);
   }
 
   for (c = L'a'; c <= L'z'; c++)
   {
-    result = lookup_node(test_hash_table, c);
+    result = lookup_node_hash_table(test_hash_table, c);
     if (result != NULL) ck_assert_msg(result->key == c, "%c != %c", result->key, c);
     else ck_abort_msg("Couldn't find character %c", c);
   }
@@ -57,11 +57,11 @@ START_TEST (ut_hash_table_insert_and_delete)
   Node *result;
   for (c = L'a'; c <= L'z'; c++)
   {
-    insert_node(test_hash_table, c);
+    insert_node_hash_table(test_hash_table, c);
   }
   for (c = L'a'; c <= L'z'; c++)
   {
-    delete_node(test_hash_table, c);
+    delete_node_hash_table(test_hash_table, c);
   }
   ck_assert_msg(test_hash_table->array->total == 0, "%d\n", test_hash_table->array->total);
   ck_assert_msg(test_hash_table->array->size == 2, "%d\n", test_hash_table->array->size);

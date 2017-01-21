@@ -37,4 +37,3 @@ int is_leaf (Node *n){
    HashTable *hash_table = n->next;
    return hash_table->array->total == 0;
 }
-
