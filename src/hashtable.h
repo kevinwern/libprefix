@@ -10,7 +10,7 @@ typedef struct HashTable {
 
 HashTable *alloc_hash_table();
 
-void dealloc_hash_table();
+void dealloc_hash_table(HashTable *h);
 
 void init_hash_table(HashTable *h, int size);
 
