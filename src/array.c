@@ -57,7 +57,7 @@ int append_dyn_array_char(DynArray *a, wchar_t c)
 
   int size = a->size;
   int i;
-  while (a->size < a->total+1){
+  while (a->size <= a->total){
     a->size *= 2;
   }
   if (size != a->size)
